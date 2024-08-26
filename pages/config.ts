@@ -1,0 +1,9 @@
+const ITEMS_PER_PAGE: number = 10;
+const VISIBLE_PAGES_COUNT: number = 7;
+const PAGINATION_CENTER: number = (VISIBLE_PAGES_COUNT + 1) / 2;
+
+export {
+    ITEMS_PER_PAGE,
+    VISIBLE_PAGES_COUNT,
+    PAGINATION_CENTER
+}

@@ -1,0 +1,158 @@
+* {
+  margin: 0;
+  padding: 0;
+  cursor: default;
+}
+
+li {
+  list-style: none;
+}
+
+body {
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #000;
+  min-height: 100vh;
+}
+
+.logo{
+  margin: 15px auto;
+  text-align: center;
+  text-decoration: underline;
+  color: #fff;
+}
+
+.container {
+  margin: 20px 0;
+  height: 25%;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-input {
+  margin: auto auto;
+  height: 50px;
+  width: 60%;
+
+  input {
+    width: 100%;
+    height: 40px;
+    border-radius: 7px;
+    border: 2px solid;
+    padding: 0 20px;
+    font-size: 20px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.gifs-container {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  width: 80%;
+  margin: 20px auto;
+
+  @media (max-width: 1024px) {
+    justify-content: center;
+  }
+}
+
+.gif {
+  display: flex;
+  align-content: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-content: unset;
+    justify-content: unset;
+    flex-wrap: unset;
+  }
+
+  img {
+    border-radius: 7px;
+    border: 2px solid #fff;
+  }
+}
+
+.pagination {
+  display: flex;
+  margin-top: 20px;
+  color: #fff;
+  height: 25%;
+  flex: auto;
+  align-items: flex-end;
+}
+
+.pagination-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto;
+
+  &__item {
+    padding: 10px 15px;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 7px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+
+    @media (max-width: 720px) {
+      padding: 10px 15px;
+    }
+
+    @media (max-width: 920px) {
+      &:first-child, &:last-child {
+        display: none;
+      }
+    }
+  }
+
+  .active {
+    background: #fff;
+    border-color: #000;
+    color: #000;
+  }
+}
+
+.tags {
+  height: 15%;
+  display: flex;
+  margin: 20px 0;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn {
+  border: 3px solid #fff;
+  padding: 10px 30px;
+  border-radius: 7px;
+  font-size: 14px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background: seagreen;
+  }
+}
+
+.settings {
+  color: #ffff;
+  position: absolute;
+  right: 30px;
+  top: 30px;
+}
