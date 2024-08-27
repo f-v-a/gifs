@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import {initializeApiKeys} from "./composables/useApi";
+const selectToken = () => {
+    const config = useRuntimeConfig();
 
-initializeApiKeys();
+    const cookieToken = useCookie('api_token');
+    const apiTokens = useState('apiTokens', () => config.public.API_KEYS.split(','));
+
+    if (!cookieToken.value) {
+        cookieToken.value = apiTokens.value[0];
+    }
+}
+
+selectToken();
 </script>
 
 <template>
-  <NuxtLayout>
-      <div class="settings">Настройки</div>
-      <NuxtPage />
-  </NuxtLayout>
+    <NuxtLayout>
+        <NuxtPage />
+    </NuxtLayout>
 </template>

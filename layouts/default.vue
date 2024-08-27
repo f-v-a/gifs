@@ -1,5 +1,7 @@
 <template>
     <div class="wrapper">
+        <Settings />
+
         <h1 class="logo">GIPHY</h1>
         <slot />
         FOOTER

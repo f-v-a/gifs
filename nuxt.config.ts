@@ -3,10 +3,16 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   css: ['~/assets/css/main.scss'],
-  components: {
-    path: '~/components',
-    pathPrefix: false,
-  },
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+    {
+      path: '~/components',
+      pathPrefix: 'rating',
+    }
+  ],
   runtimeConfig: {
     public: {
       API_KEYS: process.env.GIPHY_API_KEYS,

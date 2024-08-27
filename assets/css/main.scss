@@ -150,9 +150,57 @@ body {
   }
 }
 
-.settings {
+.settings-container {
   color: #ffff;
-  position: absolute;
-  right: 30px;
-  top: 30px;
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  height: 0;
+  margin-right: 60px;
+}
+
+.settings-icon {
+  svg {
+    cursor: pointer;
+  }
+}
+
+.inputs-group {
+  margin-top: 20px;
+  min-height: 170px;
+  background: #ffff;
+  color: #000;
+  border-radius: 7px;
+  padding: 10px;
+  z-index: 2;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  input {
+    text-align: right;
+    padding: 2px 5px 2px 2px;
+  }
+}
+
+.rating-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  margin-top: 15px;
+}
+
+.rating-item {
+  padding: 5px;
+  border: 1px solid #000;
+  cursor: pointer;
+
+  &.active {
+    background: moccasin; //steelblue
+  }
 }

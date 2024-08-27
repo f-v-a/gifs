@@ -13,6 +13,8 @@
                 v-for="(gif, index) in items"
                 :key="index"
                 :src="gif.images.fixed_height.webp"
+                :width="gif.images.fixed_height.width"
+                :height="gif.images.fixed_height.height"
             />
         </div>
     </div>
@@ -26,10 +28,13 @@
 </template>
 
 <script setup lang="ts">
-import {ITEMS_PER_PAGE, VISIBLE_PAGES_COUNT} from "~/pages/config";
+import {VISIBLE_PAGES_COUNT} from "~/pages/config";
+import {RATING} from "../components/rating/config";
 
 const route = useRoute();
 const router = useRouter();
+
+const stateFetchOptions = useState('fetchOptions');
 
 const {
     pagination,
@@ -38,7 +43,7 @@ const {
     prevPage,
     resetPagination,
     clearPagination,
-} = usePagination(VISIBLE_PAGES_COUNT, ITEMS_PER_PAGE);
+} = usePagination(VISIBLE_PAGES_COUNT, stateFetchOptions.value.itemsPerPage);
 
 const {
     currentMode,
@@ -52,7 +57,7 @@ const {
     items,
     fetchData,
     clearText,
-} = useGifsFetch(currentMode);
+} = useFetchGIF(currentMode);
 
 const updateRouteQueryParams = (params = {}) => {
     router.replace({
@@ -123,7 +128,7 @@ const searchByRouteQuery = () => {
         }
 
         pagination.page.current = Number(route.query.page);
-        pagination.offset = (pagination.page.current - 1) * ITEMS_PER_PAGE;
+        pagination.offset = (pagination.page.current - 1) * stateFetchOptions.value.itemsPerPage;
     }
 }
 
@@ -134,16 +139,25 @@ watch(() => searchText.value, (newQuery) => {
         return;
     }
 
-    getGifsByText({q: newQuery, limit: ITEMS_PER_PAGE, offset: 0});
+    getGifsByText({q: newQuery, limit: stateFetchOptions.value.itemsPerPage, offset: 0});
 });
 
 watch(() => pagination.page.current, async () => {
     setRouteQueryParams();
 
-    const {data} = await fetchData({q: searchText.value, limit: ITEMS_PER_PAGE, offset: pagination.offset});
+    const ratingOption = stateFetchOptions.value.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
+
+    const {data} = await fetchData({
+        q: searchText.value,
+        limit: stateFetchOptions.value.itemsPerPage,
+        offset: pagination.offset,
+        ...ratingOption,
+    });
 
     setPagination({total: data.value.pagination.total_count});
 }, {deep: true, immediate: true});
+
+watch([() => stateFetchOptions.value.itemsPerPage, () => stateFetchOptions.value.rating], resetPagination);
 
 </script>
 

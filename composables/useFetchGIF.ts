@@ -2,13 +2,22 @@ import {API_URL} from "~/helpers/constants";
 import {MODE} from "~/composables/useMode";
 import type {FetchOptions, Mode} from "~/helpers/types";
 import {ref, type Ref} from "vue";
-import {currentApiKey, handleApiKeyChange} from "./useApi";
 
-export const useGifsFetch = (currentMode: Ref<Mode>) => {
+const useTokens = () => {
+    const apiTokens = useState('apiTokens');
+    const cookieToken = useCookie('api_token');
+
+    return {
+        cookieToken,
+        values: apiTokens.value.values(),
+    };
+}
+
+export const useFetchGIF = (currentMode: Ref<Mode>) => {
     const items = ref<object[]>([]);
     const searchText = ref<string>('');
 
-    const tryAnotherKey = handleApiKeyChange();
+    const tokensIterator = useTokens();
     const {createAbortController} = useAbortController();
 
     const fetchData = async (options?: FetchOptions) => {
@@ -17,7 +26,7 @@ export const useGifsFetch = (currentMode: Ref<Mode>) => {
         const modeUpperCase = currentMode.value.toUpperCase() as keyof typeof MODE;
         const fetchOptions = {
             baseURL: API_URL,
-            query: {api_key: currentApiKey.value, ...options},
+            query: {api_key: tokensIterator.cookieToken.value, ...options},
             signal: abortController.signal,
         };
 
@@ -49,7 +58,15 @@ export const useGifsFetch = (currentMode: Ref<Mode>) => {
             }
         } catch (statusCode) {
             if (statusCode === 429) {
-                await tryAnotherKey(() => fetchData(options));
+                let key = tokensIterator.values.next();
+
+                if (key.done) {
+                    return;
+                }
+
+                tokensIterator.cookieToken.value = key.value;
+
+                await fetchData(options);
             }
         }
     }
