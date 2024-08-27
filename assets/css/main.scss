@@ -8,6 +8,17 @@ li {
   list-style: none;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 body {
   width: 100%;
 }
@@ -25,6 +36,7 @@ body {
   text-align: center;
   text-decoration: underline;
   color: #fff;
+  user-select: none;
 }
 
 .container {
@@ -153,12 +165,12 @@ body {
 .settings-container {
   color: #ffff;
   position: sticky;
-  top: 20px;
+  top: 30px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   height: 0;
-  margin-right: 60px;
+  margin-right: 50px;
 }
 
 .settings-icon {
@@ -188,11 +200,17 @@ body {
   }
 }
 
+.rating-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+}
+
 .rating-list {
   display: flex;
   justify-content: space-between;
   gap: 5px;
-  margin-top: 15px;
 }
 
 .rating-item {
@@ -201,6 +219,28 @@ body {
   cursor: pointer;
 
   &.active {
-    background: moccasin; //steelblue
+    background: moccasin;
   }
+}
+
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  width: 300px;
+  right: 20px;
+  top: 10px;
+  background: #3989c9;
+  color: #fff;
+  padding: 0.5em;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  transition: 1s;
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+  top: 2em;
 }

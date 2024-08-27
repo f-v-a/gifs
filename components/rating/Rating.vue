@@ -1,9 +1,11 @@
 <template>
     <div class="rating-container">
+        <label>Контент</label>
         <ul class="rating-list">
             <li
                 v-for="(rating, index) in RATING"
                 :class="{'rating-item': true, active: index === activeRatingIndex}"
+                :data-tooltip="rating.tooltip"
                 @click.prevent="setRating(index)">
                 {{ rating.name }}
             </li>
@@ -24,7 +26,7 @@ defineProps({
 
 const emit = defineEmits({setRating: null});
 
-const setRating = (index: number) => emit('setRating', index);
+const setRating = (index: string) => emit('setRating', index);
 </script>
 
 <style scoped>
