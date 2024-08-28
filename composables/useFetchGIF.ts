@@ -25,39 +25,35 @@ export const useFetchGIF = (currentMode: Ref<Mode>) => {
 
         const modeUpperCase = currentMode.value.toUpperCase() as keyof typeof MODE;
         const fetchOptions = {
+            method: 'GET',
             baseURL: API_URL,
             query: {api_key: tokensIterator.cookieToken.value, ...options},
             signal: abortController.signal,
         };
 
         try {
-            const {status, data, error} = await useFetch(MODE[modeUpperCase], fetchOptions);
-
-            if (error.value) {
-                throw error.value.statusCode;
-            }
+            const data = await $fetch(MODE[modeUpperCase], fetchOptions);
 
             switch (currentMode.value) {
                 case MODE.RANDOM:
-                    if (data.value) {
-                        items.value = [data.value.data];
+                    if (data.data) {
+                        items.value = [data.data];
                     }
 
                     break;
 
                 case MODE.SEARCH:
                 case MODE.TRENDING:
-                    if (data.value) {
-                        items.value = data.value.data;
+                    if (data.data) {
+                        items.value = data.data;
                     }
             }
 
             return {
-                status,
                 data,
             }
-        } catch (statusCode) {
-            if (statusCode === 429) {
+        } catch (e) {
+            if (e.response.status === 429) {
                 let key = tokensIterator.values.next();
 
                 if (key.done) {

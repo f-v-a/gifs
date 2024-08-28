@@ -240,3 +240,21 @@ body {
     background: moccasin;
   }
 }
+
+.settings-divider {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  height: 1px;
+  background-color: rgb(216, 216, 216);
+}
+
+.concat-gifs {
+  label {
+    display: flex;
+    flex-direction: row;
+  }
+
+  input {
+    margin-right: 10px;
+  }
+}

@@ -79,7 +79,7 @@ const getMode = (mode: string) => {
             getRandomGif();
             break;
         case MODE.TRENDING:
-            if (currentMode.value === MODE.TRENDING) {
+            if (currentMode.value === mode) {
                 break;
             }
 
@@ -147,14 +147,14 @@ watch(() => pagination.page.current, async () => {
 
     const ratingOption = stateFetchOptions.value.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
 
-    const {data} = await fetchData({
+    const data = await fetchData({
         q: searchText.value,
         limit: stateFetchOptions.value.itemsPerPage,
         offset: pagination.offset,
         ...ratingOption,
     });
 
-    setPagination({total: data.value.pagination.total_count});
+    setPagination({total: data.data.pagination.total_count});
 }, {deep: true, immediate: true});
 
 watch([() => stateFetchOptions.value.itemsPerPage, () => stateFetchOptions.value.rating], resetPagination);

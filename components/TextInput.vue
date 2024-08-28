@@ -1,6 +1,7 @@
 <template>
     <input
         type="text"
+        placeholder="Введите текст запроса"
         :value="modelValue"
         @change.prevent="onChange" />
 </template>

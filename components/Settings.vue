@@ -23,6 +23,7 @@
                 @setRating="setRating"
                 @closeSettings="closeSettings"
             />
+            <div class="settings-divider" />
         </div>
     </div>
 </template>
