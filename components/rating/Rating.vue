@@ -1,11 +1,17 @@
 <template>
     <div class="rating-container">
-        <label>Контент</label>
+        <div class="rating-title">
+            <label>Контент</label>
+            <span
+                class="more"
+                @click.prevent="linkClickHandler">
+                Подробнее
+            </span>
+        </div>
         <ul class="rating-list">
             <li
                 v-for="(rating, index) in RATING"
                 :class="{'rating-item': true, active: index === activeRatingIndex}"
-                :data-tooltip="rating.tooltip"
                 @click.prevent="setRating(index)">
                 {{ rating.name }}
             </li>
@@ -16,6 +22,8 @@
 <script setup lang="ts">
 import {RATING} from "./config";
 
+const router = useRouter();
+
 defineProps({
     activeRatingIndex: {
         type: [String, null],
@@ -24,9 +32,14 @@ defineProps({
     }
 });
 
-const emit = defineEmits({setRating: null});
+const emit = defineEmits({setRating: null, closeSettings: null});
 
 const setRating = (index: string) => emit('setRating', index);
+
+const linkClickHandler = () => {
+    emit('closeSettings');
+    router.push('/content-rating');
+};
 </script>
 
 <style scoped>

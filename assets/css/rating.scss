@@ -1,0 +1,125 @@
+* {
+  color: #fff
+}
+
+.rating-page {
+  font: inherit;
+  vertical-align: baseline;
+  width: 80%;
+  align-self: center;
+}
+
+.rating-page-title {
+  margin: 0 0 1.875rem;
+  line-height: 3.25rem;
+  letter-spacing: normal;
+  color: #fff;
+  font-family: 'Nexa Black', sans-serif;
+  font-size: 2.125rem;
+  font-weight: 400;
+}
+
+.rating-page-description {
+  margin: 0 0 1.5rem;
+  color: #fff;
+  font-family: Interface, 'Helvetica Neue', helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5rem;
+}
+
+.rating-levels-text {
+  margin: 0 0 0.625rem;
+  color: #fff;
+  font-family: Interface, 'Helvetica Neue', helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 1.75rem;
+}
+
+.rating-wrapper {
+  width: 100%;
+  display: flex;
+}
+
+.rating-logo {
+  background: linear-gradient(to right bottom, rgb(0, 255, 153), rgb(0, 204, 255));
+  width: 140px;
+  min-width: 140px;
+  height: 140px;
+  color: #fff;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+
+  &-content {
+    width: 130px;
+    height: 130px;
+    background-color: #fff;
+    color: black;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    justify-content: center;
+  }
+}
+
+.rating-age {
+  color: #000;
+  font-family: 'Nexa Black', sans-serif;
+  font-size: 75px;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 3.375rem;
+}
+
+.rating-level {
+  line-height: 1.875rem;
+  letter-spacing: normal;
+  color: #000;
+  font-family: Interface, 'Helvetica Neue', helvetica, sans-serif;
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rating-content {
+  padding-left: 25px;
+  -webkit-box-flex: 1;
+  flex-grow: 1;
+
+  &-title {
+    margin: 0 0 0.625rem;
+    color: #fff;
+    font-family: Interface, 'Helvetica Neue', helvetica, sans-serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: normal;
+    line-height: 1.75rem;
+  }
+
+  &-list {
+    display: block;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    margin: 20px 0;
+    padding-left: 20px;
+
+    li {
+      list-style: upper-roman;
+    }
+  }
+}
+
+.rating-divider {
+  margin-top: 65px;
+  margin-bottom: 35px;
+  height: 1px;
+  background-color: rgb(216, 216, 216);
+}

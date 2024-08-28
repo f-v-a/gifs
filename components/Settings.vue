@@ -1,5 +1,7 @@
 <template>
-    <div class="settings-container">
+    <div
+        v-click-outside="closeSettings"
+        class="settings-container">
         <div
             class="settings-icon"
             @click.prevent="showOrHideSettings">
@@ -19,6 +21,7 @@
             <Rating
                 :active-rating-index="fetchOptions.rating"
                 @setRating="setRating"
+                @closeSettings="closeSettings"
             />
         </div>
     </div>
@@ -43,6 +46,8 @@ const fetchOptions = computed({
 });
 
 const showOrHideSettings = () => isShowSettings.value = !isShowSettings.value;
+const closeSettings = () => isShowSettings.value = false;
+
 const changeItemsCount = (event: Event) => {
     if (event.target.value > 50) {
         event.target.value = 50;

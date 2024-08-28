@@ -37,6 +37,7 @@ body {
   text-decoration: underline;
   color: #fff;
   user-select: none;
+  cursor: pointer;
 }
 
 .container {
@@ -197,6 +198,10 @@ body {
   input {
     text-align: right;
     padding: 2px 5px 2px 2px;
+
+    &:focus {
+      outline: none;
+    }
   }
 }
 
@@ -205,6 +210,19 @@ body {
   flex-direction: column;
   gap: 2px;
   margin-top: 10px;
+}
+
+.rating-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.more {
+  font-size: 14px;
+  color: #000;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .rating-list {
@@ -221,26 +239,4 @@ body {
   &.active {
     background: moccasin;
   }
-}
-
-[data-tooltip] {
-  position: relative;
-}
-[data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  width: 300px;
-  right: 20px;
-  top: 10px;
-  background: #3989c9;
-  color: #fff;
-  padding: 0.5em;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
-  opacity: 0;
-  transition: 1s;
-}
-[data-tooltip]:hover::after {
-  opacity: 1;
-  top: 2em;
 }

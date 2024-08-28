@@ -2,7 +2,9 @@
     <div class="wrapper">
         <Settings />
 
-        <h1 class="logo">GIPHY</h1>
+        <NuxtLink to="/">
+            <h1 class="logo">GIPHY</h1>
+        </NuxtLink>
         <slot />
         FOOTER
     </div>
