@@ -23,7 +23,17 @@
                 @setRating="setRating"
                 @closeSettings="closeSettings"
             />
-            <div class="settings-divider" />
+            <div class="settings-columns">
+                <label for="columns-count">
+                    Количество столбцов
+                    <input
+                        id="columns-count"
+                        type="number"
+                        :value="fetchOptions.columnsCount"
+                        @input.prevent="changeColumnsCount">
+                </label>
+            </div>
+<!--            <div class="settings-divider" />-->
         </div>
     </div>
 </template>
@@ -31,7 +41,6 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {ITEMS_PER_PAGE} from "../pages/config";
-import SettingsSvg from "~/components/svg/SettingsSvg.vue";
 
 const isShowSettings = ref(false);
 
@@ -54,7 +63,15 @@ const changeItemsCount = (event: Event) => {
         event.target.value = 50;
     }
 
-    fetchOptions.value = {key: 'itemsPerPage', value: event.target.value}
+    fetchOptions.value = {key: 'itemsPerPage', value: event.target.value};
+};
+
+const changeColumnsCount = (event: Event) => {
+    if (event.target.value > 6) {
+        event.target.value = 6;
+    }
+
+    fetchOptions.value = {key: 'columnsCount', value: event.target.value};
 };
 
 const setRating = (index) => {
@@ -67,6 +84,10 @@ if (!fetchOptions.value?.itemsPerPage) {
 
 if (!fetchOptions.value?.rating) {
     fetchOptions.value = {key: 'rating', value: null};
+}
+
+if (!fetchOptions.value?.columnsCount) {
+    fetchOptions.value = {key: 'columnsCount', value: 4};
 }
 </script>
 

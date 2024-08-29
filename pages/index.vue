@@ -2,20 +2,18 @@
     <FilterButtons @buttonClick="getMode" />
     <div class="container">
         <div class="search-input">
-            <TextInput v-model.lazy="searchText" />
+            <TextInput v-model="searchText" />
         </div>
     </div>
-    <div class="gifs-container">
+    <div
+        v-if="items.length > 0"
+        :style="{'column-count': stateFetchOptions.columnsCount}"
+        class="gifs-container">
         <div
-            v-if="items.length > 0"
+            v-for="(gif, index) in items"
+            :key="index"
             class="gif">
-            <NuxtImg
-                v-for="(gif, index) in items"
-                :key="index"
-                :src="gif.images.fixed_height.webp"
-                :width="gif.images.fixed_height.width"
-                :height="gif.images.fixed_height.height"
-            />
+            <NuxtImg :src="gif.images.original.webp" />
         </div>
     </div>
     <Pagination
@@ -102,6 +100,7 @@ const getRandomGif = () => {
 }
 
 const getTrendGifs = () => {
+    // TODO: сбросить параметр text
     setTrendsMode();
     resetPagination();
     clearText();
