@@ -83,23 +83,22 @@ body {
 .gifs-container {
   width: 60%;
   margin: 20px auto;
-  -webkit-column-count: 4;
-  -moz-column-count: 4;
   column-count: 4;
-  -webkit-column-gap: 6px;
-  -moz-column-gap: 6px;
-  column-gap: 6px;
+  column-gap: 10px;
   position: relative;
 }
 
 .gif {
   position: relative;
+  margin-bottom: 6px;
 
   img {
     width: 100%;
     max-width: 100%;
     min-width: 100px;
     object-fit: cover;
+    background: #ffff;
+    border-radius: 5px;
   }
 }
 
