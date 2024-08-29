@@ -6,7 +6,6 @@
             <h1 class="logo">GIPHY</h1>
         </NuxtLink>
         <slot />
-        FOOTER
     </div>
 </template>
 

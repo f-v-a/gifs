@@ -1,8 +1,16 @@
 <template>
     <FilterButtons @buttonClick="getMode" />
     <div class="container">
-        <div class="search-input">
-            <TextInput v-model="searchText" />
+        <div class="modes-container">
+            <ModeText :current-mode="currentMode" />
+            <div class="settings-text">
+                Settings
+            </div>
+        </div>
+        <div class="search-wrapper">
+            <div class="search-input">
+                <TextInput v-model="searchText" />
+            </div>
         </div>
     </div>
     <div
@@ -26,8 +34,8 @@
 </template>
 
 <script setup lang="ts">
-import {VISIBLE_PAGES_COUNT} from "~/pages/config";
-import {RATING} from "../components/rating/config";
+import {VISIBLE_PAGES_COUNT} from "~/pages/config.js";
+import {RATING} from "../components/rating/config.js";
 
 const route = useRoute();
 const router = useRouter();

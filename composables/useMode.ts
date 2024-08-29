@@ -7,6 +7,12 @@ export const MODE = Object.freeze({
     SEARCH: 'search',
 });
 
+export const MODES_TEXT = Object.freeze({
+    [MODE.TRENDING]: 'Тренды',
+    [MODE.RANDOM]: 'Случайная подборка',
+    [MODE.SEARCH]: 'Глобальный поиск',
+});
+
 export const useMode = () => {
     const currentMode = ref<Mode>(MODE.SEARCH);
 
