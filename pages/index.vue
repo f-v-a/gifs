@@ -1,8 +1,10 @@
 <template>
-    <FilterButtons @buttonClick="getMode" />
+<!--    <FilterButtons @buttonClick="getMode" />-->
     <div class="container">
         <div class="modes-container">
-            <ModeText :current-mode="currentMode" />
+            <ModeText
+                :current-mode="currentMode"
+                @changeMode="getMode" />
             <div class="settings-text">
                 Settings
             </div>

@@ -57,12 +57,74 @@ body {
 .current-mode {
   display: flex;
   align-items: center;
+  position: relative;
   gap: .4rem;
 }
 
 .current-mode-text {
   color: #d4d2d2;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
+
+// начало режима
+.dropdown-mode {
+  position: absolute;
+  width: 300px;
+  top: 40px;
+  background: #000;
+  color: #fff;
+
+  &.show li {
+    padding: 10px;
+    border-top: 1px lighten(#333, 2%) solid;
+    height: auto;
+    overflow: auto;
+    opacity: 1;
+  }
+
+  ul {
+    display: block;
+    position: relative;
+    list-style: none;
+  }
+}
+
+.dropdown-mode li {
+  padding: 0 10px;
+  background: darken(#333, 2%);
+  color: #ffff;
+  text-align: left;
+  border: 0;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  transition-property: all, background-color;
+  transition-duration: 0.2s, 0.4s;
+
+  &:hover {
+    background-color: darken(#333, 4%);
+  }
+
+  &:last-child {
+    border-radius: 0 0 5px 5px;
+  }
+
+  &:before {
+    content: '';
+    margin-top: -2px;
+    margin-right: 10px;
+    display: inline-block;
+    border-radius: 5px;
+    vertical-align: middle;
+    width: 16px; height: 16px;
+  }
+}
+// конец режима
 
 .search-wrapper {
   margin: auto auto;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import {MODES_TEXT} from "~/composables/useMode";
+import {ref} from "vue";
+import {MODE, MODES_TEXT} from "~/composables/useMode";
 import {RandomSvg, TrendsSvg, GlobalSearchSvg} from '#components';
 
 const props = defineProps({
@@ -9,6 +10,12 @@ const props = defineProps({
         default: MODE.SEARCH
     }
 });
+
+const emit = defineEmits({
+    changeMode: null,
+});
+
+const isShowDropdown = ref(false);
 
 const componentName = computed(() => {
     switch (props.currentMode) {
@@ -21,12 +28,32 @@ const componentName = computed(() => {
     }
 });
 
+const changeMode = (mode: string) => emit('changeMode', mode);
+const showOrHideDropdown = () => isShowDropdown.value = !isShowDropdown.value;
+
 </script>
 
 <template>
     <div class="current-mode">
         <component :is="componentName" />
-        <h4 class="current-mode-text">{{ MODES_TEXT[currentMode] }}</h4>
+        <h4
+            class="current-mode-text"
+            @click.prevent="showOrHideDropdown">
+            {{ MODES_TEXT[currentMode] }}
+        </h4>
+
+        <div :class="{'dropdown-mode': true, show: isShowDropdown}">
+            <ul>
+                <li
+                    v-for="mode in MODE"
+                    :key="mode"
+                    :class="{'mode-item': true, active: currentMode === mode}"
+                    :style="{display: currentMode === mode ? 'none' : 'block'}"
+                    @click.prevent="changeMode(mode)">
+                    {{ mode }}
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
