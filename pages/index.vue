@@ -1,15 +1,15 @@
 <template>
-<!--    <FilterButtons @buttonClick="getMode" />-->
     <div class="container">
         <div class="modes-container">
-            <ModeText
-                :current-mode="currentMode"
-                @changeMode="getMode" />
             <div class="settings-text">
                 Settings
             </div>
         </div>
         <div class="search-wrapper">
+            <ModeText
+                :current-mode="currentMode"
+                @changeMode="getMode"
+            />
             <div class="search-input">
                 <TextInput v-model="searchText" />
             </div>

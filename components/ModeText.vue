@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import {MODE, MODES_TEXT} from "~/composables/useMode";
+import {MODE} from "~/composables/useMode";
 import {RandomSvg, TrendsSvg, GlobalSearchSvg} from '#components';
+
+const modesWithoutGlobal = [MODE.TRENDING, MODE.RANDOM];
 
 const props = defineProps({
     currentMode: {
@@ -17,8 +19,12 @@ const emit = defineEmits({
 
 const isShowDropdown = ref(false);
 
-const componentName = computed(() => {
-    switch (props.currentMode) {
+const componentName = computed(() => getSvgByMode(props.currentMode));
+
+const changeMode = (mode: string) => emit('changeMode', mode);
+const showOrHideDropdown = () => isShowDropdown.value = !isShowDropdown.value;
+const getSvgByMode = (currentMode: string) => {
+    switch (currentMode) {
         case MODE.SEARCH:
             return GlobalSearchSvg;
         case MODE.TRENDING:
@@ -26,31 +32,24 @@ const componentName = computed(() => {
         case MODE.RANDOM:
             return RandomSvg;
     }
-});
-
-const changeMode = (mode: string) => emit('changeMode', mode);
-const showOrHideDropdown = () => isShowDropdown.value = !isShowDropdown.value;
+}
 
 </script>
 
 <template>
-    <div class="current-mode">
+    <div
+        :class="{'current-mode-icon': true, show: isShowDropdown}"
+        @click.prevent="showOrHideDropdown">
         <component :is="componentName" />
-        <h4
-            class="current-mode-text"
-            @click.prevent="showOrHideDropdown">
-            {{ MODES_TEXT[currentMode] }}
-        </h4>
 
-        <div :class="{'dropdown-mode': true, show: isShowDropdown}">
+        <div class="dropdown-mode">
             <ul>
                 <li
-                    v-for="mode in MODE"
+                    v-for="mode in modesWithoutGlobal"
                     :key="mode"
                     :class="{'mode-item': true, active: currentMode === mode}"
-                    :style="{display: currentMode === mode ? 'none' : 'block'}"
                     @click.prevent="changeMode(mode)">
-                    {{ mode }}
+                    <component :is="getSvgByMode(mode)" />
                 </li>
             </ul>
         </div>
