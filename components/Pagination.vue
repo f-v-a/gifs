@@ -1,28 +1,3 @@
-<script setup lang="ts">
-defineProps({
-     pages: {
-         type: Array,
-         required: false,
-         default: () => []
-     },
-     currentPage: {
-         type: Number,
-         required: false,
-         default: 1,
-     }
-});
-
-const emit = defineEmits({
-    prevPage: null,
-    goTo: null,
-    nextPage: null,
-});
-
-const prevPage = () => emit('prevPage');
-const goTo = (page: number) => emit('goTo', {page});
-const nextPage = () => emit('nextPage');
-</script>
-
 <template>
     <div class="pagination">
         <ul class="pagination-list">
@@ -42,6 +17,27 @@ const nextPage = () => emit('nextPage');
         </ul>
     </div>
 </template>
+
+<script setup lang="ts">
+
+interface IProps {
+    pages: number[],
+    currentPage: number,
+}
+
+interface IEmits {
+    (e: 'prevPage'): void,
+    (e: 'nextPage'): void,
+    (e: 'goTo', value: {page: number})
+}
+
+const props = defineProps<IProps>();
+const emit = defineEmits<IEmits>();
+
+const prevPage = () => emit('prevPage');
+const nextPage = () => emit('nextPage');
+const goTo = (page: number) => emit('goTo', {page});
+</script>
 
 <style scoped>
 

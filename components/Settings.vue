@@ -1,14 +1,14 @@
 <template>
     <div
-        v-click-outside="closeSettings"
+        v-click-outside="close"
         class="settings-container">
         <div
             class="settings-icon"
-            @click.prevent="showOrHideSettings">
+            @click.prevent="openOrClose">
             <SettingsSvg />
         </div>
         <div
-            v-if="isShowSettings"
+            v-if="isOpen"
             class="inputs-group">
             <label for="input-per_page">
                 Гифок на странице
@@ -21,7 +21,7 @@
             <Rating
                 :active-rating-index="fetchOptions.rating"
                 @setRating="setRating"
-                @closeSettings="closeSettings"
+                @closeSettings="close"
             />
             <div class="settings-columns">
                 <label for="columns-count">
@@ -41,8 +41,9 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {ITEMS_PER_PAGE} from "../pages/config";
+import {showOrHide} from "../helpers/index";
 
-const isShowSettings = ref(false);
+const {isOpen, close, openOrClose} = showOrHide();
 
 const cookieStateOptions = useCookie('fetchOptions');
 const stateFetchOptions = useState('fetchOptions', () => cookieStateOptions.value);
@@ -54,9 +55,6 @@ const fetchOptions = computed({
         stateFetchOptions.value = {...stateFetchOptions.value, [key]: value};
     }
 });
-
-const showOrHideSettings = () => isShowSettings.value = !isShowSettings.value;
-const closeSettings = () => isShowSettings.value = false;
 
 const changeItemsCount = (event: Event) => {
     if (event.target.value > 50) {
@@ -74,8 +72,8 @@ const changeColumnsCount = (event: Event) => {
     fetchOptions.value = {key: 'columnsCount', value: event.target.value};
 };
 
-const setRating = (index) => {
-    fetchOptions.value = {key: 'rating', value: fetchOptions.value.rating === index ? null : index};
+const setRating = (rating: string) => {
+    fetchOptions.value = {key: 'rating', value: fetchOptions.value.rating === rating ? null : rating};
 };
 
 if (!fetchOptions.value?.itemsPerPage) {

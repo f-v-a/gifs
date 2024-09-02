@@ -7,15 +7,13 @@
 </template>
 
 <script setup lang="ts">
-    const emit = defineEmits<{(e: 'update:modelValue', value: string): void}>();
-    const props = defineProps({
-        modelValue: {
-            type: String,
-            required: true,
-        }
-    });
+interface IProps {modelValue: string}
+interface IEmits {(e: 'update:modelValue', value: string)}
 
-    const onChange = (event: Event) => emit('update:modelValue', event.target.value);
+const props = defineProps<IProps>();
+const emit = defineEmits<IEmits>();
+
+const onChange = (event: Event) => emit('update:modelValue', event.target.value);
 </script>
 
 <style scoped>

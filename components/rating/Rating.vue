@@ -22,23 +22,21 @@
 <script setup lang="ts">
 import {RATING} from "./config";
 
-const router = useRouter();
+interface IProps {activeRatingIndex: string | null}
+interface IEmits {
+    (e: 'setRating', value: string): void
+    (e: 'closeSettings'): void
+}
 
-defineProps({
-    activeRatingIndex: {
-        type: [String, null],
-        required: false,
-        default: null,
-    }
-});
+const props = defineProps<IProps>();
+const emit = defineEmits<IEmits>();
 
-const emit = defineEmits({setRating: null, closeSettings: null});
+const setRating = (rating: string) => emit('setRating', rating);
 
-const setRating = (index: string) => emit('setRating', index);
-
-const linkClickHandler = () => {
+const linkClickHandler = async () => {
     emit('closeSettings');
-    router.push('/content-rating');
+
+    await navigateTo('/content-rating');
 };
 </script>
 

@@ -236,6 +236,7 @@ body {
   align-items: flex-end;
   height: 0;
   margin-right: 50px;
+  z-index: 2;
 }
 
 .settings-icon {
@@ -250,7 +251,6 @@ body {
   color: #000;
   border-radius: 7px;
   padding: 10px;
-  z-index: 2;
 
   label {
     display: flex;

@@ -38,9 +38,9 @@
 <script setup lang="ts">
 import {VISIBLE_PAGES_COUNT} from "~/pages/config.js";
 import {RATING} from "../components/rating/config.js";
+import type {Mode} from "../helpers/types";
 
 const route = useRoute();
-const router = useRouter();
 
 const stateFetchOptions = useState('fetchOptions');
 
@@ -67,8 +67,8 @@ const {
     clearText,
 } = useFetchGIF(currentMode);
 
-const updateRouteQueryParams = (params = {}) => {
-    router.replace({
+const updateRouteQueryParams = async (params = {}) => {
+    await navigateTo({
         path: route.path,
         query: params,
     });
@@ -81,7 +81,7 @@ const setRouteQueryParams = () => {
     updateRouteQueryParams(routeQueryParams);
 }
 
-const getMode = (mode: string) => {
+const getMode = (mode: Mode) => {
     switch (mode) {
         case MODE.RANDOM:
             getRandomGif();
