@@ -40,17 +40,32 @@ body {
   cursor: pointer;
 }
 
+.sides-container {
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.modes-menu {
+  display: flex;
+  align-items: center;
+  width: 20%;
+  height: 100vh;
+  color: #fff;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
 .container {
+  width: 80%;
   margin: 20px 0;
   display: flex;
   flex-direction: column;
-}
-
-.modes-container {
-  display: flex;
-  width: 60%;
-  margin: 0 auto 20px auto;
-  justify-content: space-between;
 }
 
 @keyframes fadeIn {
@@ -62,51 +77,7 @@ body {
   }
 }
 
-.current-mode-icon {
-  position: relative;
-  background: #fff;
-  width: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px 0 0 5px;
-  border-right: 1px solid;
-  box-shadow: 0 4px 10px 0 rgba(255, 255, 255, 0.6);
-
-  &.show {
-    border-radius: 5px 0 0 0;
-
-    .dropdown-mode {
-      animation: fadeIn 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
-  }
-}
-
-.dropdown-mode {
-  opacity: 0;
-  position: absolute;
-  top: 41px;
-  background: #000;
-  color: #fff;
-  z-index: 1;
-
-  li {
-    background: #fff;
-    width: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-right: 1px solid;
-
-    &:not(:first-child) {
-      border-top: 1px lighten(#333, 2%) solid;
-    }
-  }
-}
-
 .search-wrapper {
-  margin: auto auto;
-  width: 60%;
   display: flex;
 }
 
@@ -122,7 +93,7 @@ body {
     background: #FFFFFF url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><path fill='%23838D99' d='M13.22 14.63a8 8 0 1 1 1.41-1.41l4.29 4.29a1 1 0 1 1-1.41 1.41l-4.29-4.29zm-.66-2.07a6 6 0 1 0-8.49-8.49 6 6 0 0 0 8.49 8.49z'></path></svg>") no-repeat 10px 10px;
     background-size: 20px 20px;
     box-shadow: 0 4px 10px 0 rgb(255, 255, 255, 0.6);
-    border-radius: 0 5px 5px 0;
+    border-radius: 5px;
     padding: .5em 1em .5em 2.5em;
 
     &::placeholder {
@@ -141,8 +112,7 @@ body {
 }
 
 .gifs-container {
-  width: 60%;
-  margin: 20px auto;
+  width: 80%;
   column-count: 4;
   column-gap: 10px;
   position: relative;
@@ -178,6 +148,7 @@ body {
   margin-top: 20px;
   color: #fff;
   height: 25%;
+  width: 80%;
   flex: auto;
   align-items: flex-end;
 }

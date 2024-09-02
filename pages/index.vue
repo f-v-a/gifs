@@ -1,38 +1,32 @@
 <template>
-    <div class="container">
-        <div class="modes-container">
-            <div class="settings-text">
-                Settings
+    <Menu />
+    <div class="main">
+        <div class="container">
+            <div class="search-wrapper">
+                <div class="search-input">
+                    <TextInput v-model="searchText" />
+                </div>
             </div>
         </div>
-        <div class="search-wrapper">
-            <ModeText
-                :current-mode="currentMode"
-                @changeMode="getMode"
-            />
-            <div class="search-input">
-                <TextInput v-model="searchText" />
-            </div>
-        </div>
-    </div>
-    <div
-        v-if="items.length > 0"
-        :style="{'column-count': stateFetchOptions.columnsCount}"
-        :class="{'gifs-container': true, random: isRandomMode}">
         <div
-            v-for="(gif, index) in items"
-            :key="index"
-            class="gif">
-            <NuxtImg :src="gif.images.original.webp" />
+            v-if="items.length > 0"
+            :style="{'column-count': stateFetchOptions.columnsCount}"
+            :class="{'gifs-container': true, random: isRandomMode}">
+            <div
+                v-for="(gif, index) in items"
+                :key="index"
+                class="gif">
+                <NuxtImg :src="gif.images.original.webp" />
+            </div>
         </div>
+        <Pagination
+            v-if="pagination.pages"
+            :pages="pagination.visible"
+            :current-page="pagination.page.current"
+            @prevPage="goToPreviousPage"
+            @goTo="setPagination"
+            @nextPage="goToNextPage" />
     </div>
-    <Pagination
-        v-if="pagination.pages"
-        :pages="pagination.visible"
-        :current-page="pagination.page.current"
-        @prevPage="goToPreviousPage"
-        @goTo="setPagination"
-        @nextPage="goToNextPage" />
 </template>
 
 <script setup lang="ts">

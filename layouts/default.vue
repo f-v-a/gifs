@@ -1,11 +1,15 @@
 <template>
     <div class="wrapper">
-        <Settings />
+        <div class="header">
+            <Settings />
 
-        <NuxtLink to="/">
-            <h1 class="logo">GIPHY</h1>
-        </NuxtLink>
-        <slot />
+            <NuxtLink to="/">
+                <h1 class="logo">GIPHY</h1>
+            </NuxtLink>
+        </div>
+        <div class="sides-container">
+            <slot />
+        </div>
     </div>
 </template>
 
