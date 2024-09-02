@@ -18,7 +18,7 @@
     <div
         v-if="items.length > 0"
         :style="{'column-count': stateFetchOptions.columnsCount}"
-        class="gifs-container">
+        :class="{'gifs-container': true, random: isRandomMode}">
         <div
             v-for="(gif, index) in items"
             :key="index"
@@ -66,6 +66,8 @@ const {
     fetchData,
     clearText,
 } = useFetchGIF(currentMode);
+
+const isRandomMode = computed(() => currentMode.value === MODE.RANDOM);
 
 const updateRouteQueryParams = async (params = {}) => {
     await navigateTo({
