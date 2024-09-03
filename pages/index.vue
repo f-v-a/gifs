@@ -1,5 +1,8 @@
 <template>
-    <Menu />
+    <Menu
+        :current-mode="currentMode"
+        @changeMode="getMode"
+    />
     <div class="main">
         <div class="container">
             <div class="search-wrapper">
@@ -45,7 +48,7 @@ const {
     prevPage,
     resetPagination,
     clearPagination,
-} = usePagination(VISIBLE_PAGES_COUNT, stateFetchOptions.value.itemsPerPage);
+} = usePagination(VISIBLE_PAGES_COUNT, stateFetchOptions.value?.itemsPerPage);
 
 const {
     currentMode,
@@ -88,6 +91,9 @@ const getMode = (mode: Mode) => {
             }
 
             getTrendGifs();
+            break;
+        case MODE.SEARCH:
+            setSearchMode();
             break;
     }
 }
@@ -133,7 +139,7 @@ const searchByRouteQuery = () => {
         }
 
         pagination.page.current = Number(route.query.page);
-        pagination.offset = (pagination.page.current - 1) * stateFetchOptions.value.itemsPerPage;
+        pagination.offset = (pagination.page.current - 1) * stateFetchOptions.value?.itemsPerPage;
     }
 }
 
@@ -144,17 +150,17 @@ watch(() => searchText.value, (newQuery) => {
         return;
     }
 
-    getGifsByText({q: newQuery, limit: stateFetchOptions.value.itemsPerPage, offset: 0});
+    getGifsByText();
 });
 
 watch(() => pagination.page.current, async () => {
     setRouteQueryParams();
 
-    const ratingOption = stateFetchOptions.value.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
+    const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
 
     const data = await fetchData({
         q: searchText.value,
-        limit: stateFetchOptions.value.itemsPerPage,
+        limit: stateFetchOptions.value?.itemsPerPage,
         offset: pagination.offset,
         ...ratingOption,
     });
@@ -162,7 +168,7 @@ watch(() => pagination.page.current, async () => {
     setPagination({total: data.data.pagination.total_count});
 }, {deep: true, immediate: true});
 
-watch([() => stateFetchOptions.value.itemsPerPage, () => stateFetchOptions.value.rating], resetPagination);
+watch([() => stateFetchOptions.value?.itemsPerPage, () => stateFetchOptions.value?.rating], resetPagination);
 
 </script>
 

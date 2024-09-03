@@ -1,40 +1,29 @@
 <template>
-    <div
-        v-click-outside="close"
-        class="settings-container">
-        <div
-            class="settings-icon"
-            @click.prevent="openOrClose">
-            <SettingsSvg />
-        </div>
-        <div
-            v-if="isOpen"
-            class="inputs-group">
-            <label for="input-per_page">
-                Гифок на странице
+    <div class="inputs-group">
+        <label for="input-per_page">
+            Гифок на странице
+            <input
+                id="input-per_page"
+                type="number"
+                :value="fetchOptions.itemsPerPage"
+                @change.prevent="changeItemsCount">
+        </label>
+        <Rating
+            :active-rating-index="fetchOptions.rating"
+            @setRating="setRating"
+            @closeSettings="close"
+        />
+        <div class="settings-columns">
+            <label for="columns-count">
+                Количество столбцов
                 <input
-                    id="input-per_page"
+                    id="columns-count"
                     type="number"
-                    :value="fetchOptions.itemsPerPage"
-                    @change.prevent="changeItemsCount">
+                    :value="fetchOptions.columnsCount"
+                    @input.prevent="changeColumnsCount">
             </label>
-            <Rating
-                :active-rating-index="fetchOptions.rating"
-                @setRating="setRating"
-                @closeSettings="close"
-            />
-            <div class="settings-columns">
-                <label for="columns-count">
-                    Количество столбцов
-                    <input
-                        id="columns-count"
-                        type="number"
-                        :value="fetchOptions.columnsCount"
-                        @input.prevent="changeColumnsCount">
-                </label>
-            </div>
-<!--            <div class="settings-divider" />-->
         </div>
+<!--            <div class="settings-divider" />-->
     </div>
 </template>
 
@@ -43,7 +32,7 @@ import {computed} from "vue";
 import {ITEMS_PER_PAGE} from "../pages/config";
 import {showOrHide} from "../helpers/index";
 
-const {isOpen, close, openOrClose} = showOrHide();
+const {close, openOrClose} = showOrHide();
 
 const cookieStateOptions = useCookie('fetchOptions');
 const stateFetchOptions = useState('fetchOptions', () => cookieStateOptions.value);

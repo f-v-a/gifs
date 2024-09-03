@@ -1,8 +1,6 @@
 <template>
     <div class="wrapper">
         <div class="header">
-            <Settings />
-
             <NuxtLink to="/">
                 <h1 class="logo">GIPHY</h1>
             </NuxtLink>

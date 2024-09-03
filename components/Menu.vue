@@ -1,37 +1,40 @@
 <template>
     <div class="modes-menu">
-        <ul>
-            <li>
-                Рандом
+        <ul class="menu-list">
+            <li
+                v-for="mode in MODE"
+                :key="mode"
+                class="menu-item"
+                @click.prevent="changeMode(mode)">
+                <span :class="{'link link--eirene': true, 'link--active': currentMode === mode}">
+                    {{ MODES_TEXT[mode] }}
+                </span>
             </li>
         </ul>
+        <div class="settings-item">
+            <span
+                class="link link--eirene"
+                @click.prevent="openOrClose">Настройки</span>
+            <Settings v-if="isOpen" />
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-// import {MODE} from "~/composables/useMode";
-// import {RandomSvg, TrendsSvg, GlobalSearchSvg} from '#components';
-// import {showOrHide} from "../helpers/index";
-// import type {Mode} from "../helpers/types";
-//
-// interface IProps {currentMode: Mode}
-// interface IEmits {(e: 'changeMode', value: string): void}
-//
-// const props = defineProps<IProps>();
-// const emit = defineEmits<IEmits>();
-//
-// const {isOpen, openOrClose} = showOrHide();
-//
-// const componentByMode = Object.freeze({
-//     [MODE.SEARCH]: GlobalSearchSvg,
-//     [MODE.TRENDING]: TrendsSvg,
-//     [MODE.RANDOM]: RandomSvg,
-// });
-//
-// const componentName = computed(() => getSvgByMode(props.currentMode));
-//
-// const changeMode = (mode: Mode) => emit('changeMode', mode);
-// const getSvgByMode = (currentMode: Mode) => componentByMode[currentMode];
+import {MODE} from "~/composables/useMode";
+import {MODES_TEXT} from "../composables/useMode";
+
+import {showOrHide} from "../helpers/index";
+import type {Mode} from "../helpers/types";
+
+interface IProps {currentMode: Mode}
+interface IEmits {(e: 'changeMode', value: string): void}
+
+const props = defineProps<IProps>();
+const emit = defineEmits<IEmits>();
+
+const {isOpen, openOrClose} = showOrHide();
+const changeMode = (mode: Mode) => emit('changeMode', mode);
 </script>
 
 <style scoped>

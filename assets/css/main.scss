@@ -34,11 +34,32 @@ body {
 .logo {
   margin: 15px auto;
   text-align: center;
-  text-decoration: underline;
+  width: fit-content;
   color: #fff;
   user-select: none;
   cursor: pointer;
+  position: relative;
 }
+
+.logo::before {
+  content: '';
+}
+
+.logo::before,
+.logo::after {
+  position: absolute;
+  width: 100%;
+  height: 7px;
+  background: linear-gradient(90deg, hsla(211, 96%, 62%, 1) 0%, hsla(295, 94%, 76%, 1) 100%);
+  top: 100%;
+  left: 0;
+  pointer-events: none;
+  border-radius: 20px;
+  transform: scale3d(1, 1, 1);
+  transition: transform 0.2s, opacity 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0.57, 0.67, 1.53);
+}
+
 
 .sides-container {
   display: flex;
@@ -49,10 +70,82 @@ body {
 
 .modes-menu {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   width: 20%;
-  height: 100vh;
+  height: 80vh;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  justify-content: center;
+  height: 100%;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.link {
+  font-size: 18px;
+  position: relative;
+  white-space: nowrap;
   color: #fff;
+  cursor: pointer;
+}
+
+.link::before {
+  content: '';
+}
+
+.link::before,
+.link::after {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, hsla(211, 96%, 62%, 1) 0%, hsla(295, 94%, 76%, 1) 100%);
+  top: 100%;
+  left: 0;
+  pointer-events: none;
+}
+
+.link--eirene {
+  font-family: europa, sans-serif;
+  font-weight: bold;
+}
+
+.link--eirene::before {
+  height: 7px;
+  border-radius: 20px;
+  transform: scale3d(1, 1, 1);
+  transition: transform 0.2s, opacity 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0.57, 0.67, 1.53);
+}
+
+.link--active::before,
+.link--eirene:hover::before {
+  transition-timing-function: cubic-bezier(0.8, 0, 0.1, 1);
+  transition-duration: 0.4s;
+  opacity: 1;
+  transform: scale3d(1.05, 0.1, 1);
+}
+
+.link--eirene span {
+  transform: translate3d(0, -4px, 0);
+  display: inline-block;
+  transition: transform 0.2s 0.05s cubic-bezier(0.2, 0.57, 0.67, 1.53);
+}
+
+.link--eirene:hover span {
+  transform: translate3d(0, 0, 0);
+  transition-timing-function: cubic-bezier(0.8, 0, 0.1, 1);
+  transition-duration: 0.4s;
+  transition-delay: 0s;
+}
+
+.settings-item {
+  position: relative;
 }
 
 .main {
@@ -121,7 +214,6 @@ body {
 .random {
   display: flex;
   justify-content: center;
-  width: 1100px;
   height: 720px;
 
   img {
@@ -209,30 +301,15 @@ body {
   }
 }
 
-.settings-container {
-  color: #ffff;
-  position: sticky;
-  top: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  height: 0;
-  margin-right: 50px;
-  z-index: 2;
-}
-
-.settings-icon {
-  svg {
-    cursor: pointer;
-  }
-}
-
 .inputs-group {
   margin-top: 20px;
   background: #ffff;
   color: #000;
   border-radius: 7px;
   padding: 10px;
+  position: absolute;
+  bottom: 30px;
+  z-index: 1;
 
   label {
     display: flex;
