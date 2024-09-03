@@ -23,21 +23,13 @@
 import {RATING} from "./config";
 
 interface IProps {activeRatingIndex: string | null}
-interface IEmits {
-    (e: 'setRating', value: string): void
-    (e: 'closeSettings'): void
-}
+interface IEmits {(e: 'setRating', value: string): void}
 
 const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
 const setRating = (rating: string) => emit('setRating', rating);
-
-const linkClickHandler = async () => {
-    emit('closeSettings');
-
-    await navigateTo('/content-rating');
-};
+const linkClickHandler = async () => await navigateTo('/content-rating');
 </script>
 
 <style scoped>
