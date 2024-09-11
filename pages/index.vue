@@ -18,8 +18,13 @@
             <div
                 v-for="(gif, index) in items"
                 :key="index"
-                class="gif">
-                <NuxtImg :src="gif.images.original.webp" />
+                :class="['gif', isLoaded[index] ? 'gif-loaded' : 'gif-loading']"
+                :style="setupImageBackground(isLoaded[index])">
+                <NuxtImg
+                    :src="gif.images.preview_webp.url"
+                    loading="lazy"
+                    @load="onImageLoad(index)"
+                />
             </div>
         </div>
         <Pagination
@@ -33,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import {VISIBLE_PAGES_COUNT} from "~/pages/config.js";
+import {GIF_BACKGROUND_COLORS, VISIBLE_PAGES_COUNT} from "~/pages/config.js";
 import {RATING} from "../components/rating/config.js";
 import type {Mode} from "../helpers/types";
 
@@ -60,11 +65,24 @@ const {
 const {
     searchText,
     items,
+    isLoaded,
     fetchData,
     clearText,
 } = useFetchGIF(currentMode);
 
 const isRandomMode = computed(() => currentMode.value === MODE.RANDOM);
+
+const setupImageBackground = (isLoaded: boolean) => {
+    if (isLoaded) {
+        return;
+    }
+
+    const index = Math.floor(Math.random() * GIF_BACKGROUND_COLORS.length);
+
+    return {background: GIF_BACKGROUND_COLORS[index]};
+}
+
+const onImageLoad = (index: number) => isLoaded.value[index] = true;
 
 const updateRouteQueryParams = async (params = {}) => {
     await navigateTo({

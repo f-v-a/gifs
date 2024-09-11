@@ -15,6 +15,7 @@ const useTokens = () => {
 
 export const useFetchGIF = (currentMode: Ref<Mode>) => {
     const items = ref<object[]>([]);
+    const isLoaded = ref<boolean[]>([]);
     const searchText = ref<string>('');
 
     const tokensIterator = useTokens();
@@ -33,6 +34,8 @@ export const useFetchGIF = (currentMode: Ref<Mode>) => {
 
         try {
             const data = await $fetch(MODE[modeUpperCase], fetchOptions);
+
+            isLoaded.value = Array(data.data.length).fill(false);
 
             switch (currentMode.value) {
                 case MODE.RANDOM:
@@ -72,6 +75,7 @@ export const useFetchGIF = (currentMode: Ref<Mode>) => {
     return {
         searchText,
         items,
+        isLoaded,
         fetchData,
         clearText,
     }
