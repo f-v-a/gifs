@@ -14,7 +14,7 @@ export const MODES_TEXT = Object.freeze({
 });
 
 export const useMode = () => {
-    const currentMode = ref<Mode>(MODE.SEARCH);
+    const currentMode = ref<Mode>(MODE.TRENDING);
 
     const setTrendsMode = () => currentMode.value = MODE.TRENDING;
     const setRandomMode = () => currentMode.value = MODE.RANDOM;

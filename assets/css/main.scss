@@ -117,6 +117,27 @@ body {
   @media (max-width: 950px) {
     font-size: 14px;
   }
+
+  &:hover {
+    background: linear-gradient(90deg, hsl(211, 96%, 62%) 0%, hsl(295, 94%, 76%) 100%);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 18px;
+    position: relative;
+    white-space: nowrap;
+    color: #fff;
+    cursor: pointer;
+    font-family: europa, sans-serif;
+    font-weight: bold;
+
+    &.link::before {
+      height: 0;
+    }
+
+    &.link--eirene::before {
+        height: 0;
+    }
+  }
 }
 
 .link::before {
@@ -147,14 +168,6 @@ body {
   transition-timing-function: cubic-bezier(0.2, 0.57, 0.67, 1.53);
 }
 
-.link--active::before,
-.link--eirene:hover::before {
-  transition-timing-function: cubic-bezier(0.8, 0, 0.1, 1);
-  transition-duration: 0.4s;
-  opacity: 1;
-  transform: scale3d(1.05, 0.1, 1);
-}
-
 .link--eirene span {
   transform: translate3d(0, -4px, 0);
   display: inline-block;
@@ -166,6 +179,19 @@ body {
   transition-timing-function: cubic-bezier(0.8, 0, 0.1, 1);
   transition-duration: 0.4s;
   transition-delay: 0s;
+}
+
+.link--active {
+  background: linear-gradient(90deg, hsl(211, 96%, 62%) 0%, hsl(295, 94%, 76%) 100%);
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  position: relative;
+  white-space: nowrap;
+  color: #fff;
+  cursor: pointer;
+  font-family: europa, sans-serif;
+  font-weight: bold;
 }
 
 .settings-item {
@@ -245,11 +271,13 @@ body {
 }
 
 .gifs-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
   width: 80%;
-  column-count: 4;
-  column-gap: 10px;
   position: relative;
-  
+  grid-auto-flow: dense;
+
   @media screen and (max-width: 950px) {
     width: 100%;
   }
@@ -275,20 +303,17 @@ body {
 
 .gif {
   position: relative;
-  margin-bottom: 6px;
 
   img {
     width: 100%;
-    max-width: 100%;
-    min-width: 100px;
+    height: 100%;
     object-fit: cover;
     border-radius: 5px;
   }
 
   &-loading {
     border-radius: 5px;
-    background: #ffff;
-    height: 100px;
+    height: 200px;
 
     img {
       opacity: 0;

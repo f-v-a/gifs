@@ -6,7 +6,7 @@
                 :key="mode"
                 class="menu-item"
                 @click.prevent="changeMode(mode)">
-                <span :class="{'link link--eirene': true, 'link--active': currentMode === mode}">
+                <span :class="[currentMode === mode ? 'link--active' : 'link link--eirene']">
                     {{ MODES_TEXT[mode] }}
                 </span>
             </li>

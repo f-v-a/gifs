@@ -12,16 +12,6 @@
             :active-rating-index="fetchOptions.rating"
             @setRating="setRating"
         />
-        <div class="settings-columns">
-            <label for="columns-count">
-                Количество столбцов
-                <input
-                    id="columns-count"
-                    type="number"
-                    :value="fetchOptions.columnsCount"
-                    @input.prevent="changeColumnsCount">
-            </label>
-        </div>
 <!--            <div class="settings-divider" />-->
     </div>
 </template>
@@ -37,14 +27,6 @@ const changeItemsCount = (event: Event) => {
     }
 
     setOption({key: 'itemsPerPage', value: event.target.value});
-};
-
-const changeColumnsCount = (event: Event) => {
-    if (event.target.value > 6) {
-        event.target.value = 6;
-    }
-
-    setOption({key: 'columnsCount', value: event.target.value});
 };
 
 const setRating = (rating: string) => {

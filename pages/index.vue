@@ -13,27 +13,20 @@
         </div>
         <div
             v-if="items.length > 0"
-            :style="{'column-count': stateFetchOptions.columnsCount}"
             :class="{'gifs-container': true, random: isRandomMode}">
             <div
                 v-for="(gif, index) in items"
                 :key="index"
-                :class="['gif', isLoaded[index] ? 'gif-loaded' : 'gif-loading']"
-                :style="setupImageBackground(isLoaded[index])">
+                :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
+                :style="{...setupImageBackground(gif.isLoaded), 'grid-column': gif.images.fixed_height.width >= 300 ? 'span 2' : 'span 1'}">
                 <NuxtImg
-                    :src="gif.images.preview_webp.url"
+                    :src="gif.images.fixed_height.url"
                     loading="lazy"
                     @load="onImageLoad(index)"
                 />
             </div>
         </div>
-        <Pagination
-            v-if="pagination.pages"
-            :pages="pagination.visible"
-            :current-page="pagination.page.current"
-            @prevPage="goToPreviousPage"
-            @goTo="setPagination"
-            @nextPage="goToNextPage" />
+        <div ref="scrollAnchor" :style="{height: '10px'}"/>
     </div>
 </template>
 
@@ -43,6 +36,7 @@ import {RATING} from "../components/rating/config.js";
 import type {Mode} from "../helpers/types";
 
 const route = useRoute();
+const scrollAnchor = ref();
 
 const stateFetchOptions = useState('fetchOptions');
 
@@ -65,7 +59,6 @@ const {
 const {
     searchText,
     items,
-    isLoaded,
     fetchData,
     clearText,
 } = useFetchGIF(currentMode);
@@ -82,7 +75,7 @@ const setupImageBackground = (isLoaded: boolean) => {
     return {background: GIF_BACKGROUND_COLORS[index]};
 }
 
-const onImageLoad = (index: number) => isLoaded.value[index] = true;
+const onImageLoad = (index: number) => items.value[index].isLoaded = true;
 
 const updateRouteQueryParams = async (params = {}) => {
     await navigateTo({
@@ -146,23 +139,6 @@ const goToPreviousPage = () => {
     setRouteQueryParams();
 }
 
-const searchByRouteQuery = () => {
-    if (route.query.text) {
-        searchText.value = route.query.text.toString();
-    }
-
-    if (route.query.page) {
-        if (!route.query.text) {
-            setTrendsMode();
-        }
-
-        pagination.page.current = Number(route.query.page);
-        pagination.offset = (pagination.page.current - 1) * stateFetchOptions.value?.itemsPerPage;
-    }
-}
-
-searchByRouteQuery();
-
 watch(() => searchText.value, (newQuery) => {
     if (!searchText.value) {
         return;
@@ -171,22 +147,69 @@ watch(() => searchText.value, (newQuery) => {
     getGifsByText();
 });
 
-watch(() => pagination.page.current, async () => {
-    setRouteQueryParams();
+// watch(() => pagination.page.current, async () => {
+//     setRouteQueryParams();
+//
+//     const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
+//
+//     const data = await fetchData({
+//         q: searchText.value,
+//         limit: stateFetchOptions.value?.itemsPerPage,
+//         offset: pagination.offset,
+//         ...ratingOption,
+//     });
+//
+//     setPagination({total: data.data.pagination.total_count});
+// }, {deep: true, immediate: true});
+
+watch([() => stateFetchOptions.value?.itemsPerPage, () => stateFetchOptions.value?.rating], resetPagination);
+
+watch(() => currentMode.value, () => {
+    items.value = [];
+    pagination.offset = 0;
 
     const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
 
-    const data = await fetchData({
+    fetchData({
+        q: searchText.value,
+        limit: stateFetchOptions.value?.itemsPerPage,
+        offset: pagination.offset,
+        ...ratingOption,
+    });
+});
+
+const getData = () => {
+    const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
+
+    fetchData({
         q: searchText.value,
         limit: stateFetchOptions.value?.itemsPerPage,
         offset: pagination.offset,
         ...ratingOption,
     });
 
-    setPagination({total: data.data.pagination.total_count});
-}, {deep: true, immediate: true});
+    const observer = new IntersectionObserver(async ([entry], observer) => {
+        if (entry.isIntersecting) {
+            pagination.offset += 20;
+            pagination.page.current++;
 
-watch([() => stateFetchOptions.value?.itemsPerPage, () => stateFetchOptions.value?.rating], resetPagination);
+            await fetchData({
+                q: searchText.value,
+                limit: stateFetchOptions.value?.itemsPerPage,
+                offset: pagination.offset,
+                ...ratingOption,
+            });
+        }
+
+        // observer.unobserve(entry.target);
+    }, {threshold: 0.5});
+
+    observer.observe(scrollAnchor.value);
+}
+
+onMounted(() => {
+    getData();
+})
 
 </script>
 
