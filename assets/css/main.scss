@@ -323,6 +323,12 @@ body {
   &-loaded {
     background: none;
   }
+
+  &-hide {
+    img {
+      opacity: 0;
+    }
+  }
 }
 
 .pagination {

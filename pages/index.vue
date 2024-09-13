@@ -15,14 +15,16 @@
             v-if="items.length > 0"
             :class="{'gifs-container': true, random: isRandomMode}">
             <div
+                ref="observableItems"
                 v-for="(gif, index) in items"
                 :key="index"
+                :id="index"
+                :data-src="gif.images.fixed_height.url"
                 :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
-                :style="{...setupImageBackground(gif.isLoaded), 'grid-column': gif.images.fixed_height.width >= 300 ? 'span 2' : 'span 1'}">
+                :style="{...setupImageBackground(gif.isLoaded), 'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
                 <NuxtImg
                     :src="gif.images.fixed_height.url"
                     loading="lazy"
-                    @load="onImageLoad(index)"
                 />
             </div>
         </div>
@@ -37,6 +39,7 @@ import type {Mode} from "../helpers/types";
 
 const route = useRoute();
 const scrollAnchor = ref();
+const observableItems = ref([]);
 
 const stateFetchOptions = useState('fetchOptions');
 
@@ -207,9 +210,31 @@ const getData = () => {
     observer.observe(scrollAnchor.value);
 }
 
+let observer = null;
+
+watch(() => observableItems.value, (newItems) => {
+    const newElements = newItems.slice(-stateFetchOptions.value?.itemsPerPage);
+
+    newElements.forEach((item) => observer.observe(item));
+}, {deep: true})
+
 onMounted(() => {
     getData();
-})
+
+    observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                console.log(entry.target.dataset)
+                onImageLoad(entry.target.id);
+                entry.target.classList.remove('gif-hide');
+            } else {
+                entry.target.firstElementChild.srcset = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                entry.target.classList.add('gif-hide');
+                entry.target.style.background = setupImageBackground(false).background;
+            }
+        });
+    }, {threshold: 0.75});
+});
 
 </script>
 
