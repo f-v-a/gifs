@@ -15,6 +15,7 @@ const useTokens = () => {
 
 export const useFetchGIF = (currentMode: Ref<Mode>) => {
     const items = ref<object[]>([]);
+    const visibleItems = ref<object[]>([]);
     const searchText = ref<string>('');
 
     const tokensIterator = useTokens();
@@ -72,6 +73,7 @@ export const useFetchGIF = (currentMode: Ref<Mode>) => {
     return {
         searchText,
         items,
+        visibleItems,
         fetchData,
         clearText,
     }

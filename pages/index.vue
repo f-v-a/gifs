@@ -33,9 +33,10 @@
 </template>
 
 <script setup lang="ts">
-import {GIF_BACKGROUND_COLORS, VISIBLE_PAGES_COUNT} from "~/pages/config.js";
+import {GIF_BACKGROUND_COLORS} from "~/pages/config.js";
 import {RATING} from "../components/rating/config.js";
 import type {Mode} from "../helpers/types";
+import {ITEMS_PER_PAGE} from "./config";
 
 const route = useRoute();
 const scrollAnchor = ref();
@@ -43,14 +44,7 @@ const observableItems = ref([]);
 
 const stateFetchOptions = useState('fetchOptions');
 
-const {
-    pagination,
-    setPagination,
-    nextPage,
-    prevPage,
-    resetPagination,
-    clearPagination,
-} = usePagination(VISIBLE_PAGES_COUNT, stateFetchOptions.value?.itemsPerPage);
+const {pagination, reset} = usePagination();
 
 const {
     currentMode,
@@ -80,20 +74,6 @@ const setupImageBackground = (isLoaded: boolean) => {
 
 const onImageLoad = (index: number) => items.value[index].isLoaded = true;
 
-const updateRouteQueryParams = async (params = {}) => {
-    await navigateTo({
-        path: route.path,
-        query: params,
-    });
-}
-
-const setRouteQueryParams = () => {
-    const textParam = currentMode.value === MODE.SEARCH ? {text: searchText.value} : {};
-    const routeQueryParams = {...route.query, ...textParam, page: pagination.page.current};
-
-    updateRouteQueryParams(routeQueryParams);
-}
-
 const getMode = (mode: Mode) => {
     switch (mode) {
         case MODE.RANDOM:
@@ -114,32 +94,21 @@ const getMode = (mode: Mode) => {
 
 const getGifsByText = () => {
     setSearchMode();
-    resetPagination();
+    reset();
 }
 
 const getRandomGif = () => {
     setRandomMode();
-    updateRouteQueryParams();
     clearText();
-    clearPagination();
+    reset();
     fetchData();
 }
 
 const getTrendGifs = () => {
     // TODO: сбросить параметр text
     setTrendsMode();
-    resetPagination();
+    reset();
     clearText();
-}
-
-const goToNextPage = () => {
-    nextPage();
-    setRouteQueryParams();
-}
-
-const goToPreviousPage = () => {
-    prevPage();
-    setRouteQueryParams();
 }
 
 watch(() => searchText.value, (newQuery) => {
@@ -150,22 +119,7 @@ watch(() => searchText.value, (newQuery) => {
     getGifsByText();
 });
 
-// watch(() => pagination.page.current, async () => {
-//     setRouteQueryParams();
-//
-//     const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
-//
-//     const data = await fetchData({
-//         q: searchText.value,
-//         limit: stateFetchOptions.value?.itemsPerPage,
-//         offset: pagination.offset,
-//         ...ratingOption,
-//     });
-//
-//     setPagination({total: data.data.pagination.total_count});
-// }, {deep: true, immediate: true});
-
-watch([() => stateFetchOptions.value?.itemsPerPage, () => stateFetchOptions.value?.rating], resetPagination);
+watch(() => stateFetchOptions.value?.rating, reset);
 
 watch(() => currentMode.value, () => {
     items.value = [];
@@ -175,7 +129,7 @@ watch(() => currentMode.value, () => {
 
     fetchData({
         q: searchText.value,
-        limit: stateFetchOptions.value?.itemsPerPage,
+        limit: ITEMS_PER_PAGE,
         offset: pagination.offset,
         ...ratingOption,
     });
@@ -186,7 +140,7 @@ const getData = () => {
 
     fetchData({
         q: searchText.value,
-        limit: stateFetchOptions.value?.itemsPerPage,
+        limit: ITEMS_PER_PAGE,
         offset: pagination.offset,
         ...ratingOption,
     });
@@ -194,18 +148,16 @@ const getData = () => {
     const observer = new IntersectionObserver(async ([entry], observer) => {
         if (entry.isIntersecting) {
             pagination.offset += 20;
-            pagination.page.current++;
 
             await fetchData({
                 q: searchText.value,
-                limit: stateFetchOptions.value?.itemsPerPage,
+                limit: ITEMS_PER_PAGE,
                 offset: pagination.offset,
                 ...ratingOption,
             });
         }
 
-        // observer.unobserve(entry.target);
-    }, {threshold: 0.5});
+    }, {threshold: 0.5, rootMargin: '0px 0px 200px 0px'});
 
     observer.observe(scrollAnchor.value);
 }
@@ -213,7 +165,7 @@ const getData = () => {
 let observer = null;
 
 watch(() => observableItems.value, (newItems) => {
-    const newElements = newItems.slice(-stateFetchOptions.value?.itemsPerPage);
+    const newElements = newItems.slice(-ITEMS_PER_PAGE);
 
     newElements.forEach((item) => observer.observe(item));
 }, {deep: true})
@@ -224,11 +176,11 @@ onMounted(() => {
     observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                console.log(entry.target.dataset)
+                console.log(entry.target.id)
                 onImageLoad(entry.target.id);
                 entry.target.classList.remove('gif-hide');
             } else {
-                entry.target.firstElementChild.srcset = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                // entry.target.firstElementChild.srcset = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
                 entry.target.classList.add('gif-hide');
                 entry.target.style.background = setupImageBackground(false).background;
             }
