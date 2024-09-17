@@ -273,7 +273,7 @@ body {
 .gifs-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
+  grid-gap: 10px;
   width: 80%;
   position: relative;
   grid-auto-flow: dense;
@@ -303,6 +303,7 @@ body {
 
 .gif {
   position: relative;
+  border-radius: 5px;
 
   img {
     width: 100%;
