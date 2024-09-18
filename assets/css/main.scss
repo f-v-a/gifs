@@ -69,6 +69,7 @@ body {
   padding: 4px 8px;
   text-wrap: nowrap;
   border-radius: 5px;
+  z-index: 1;
 
   &:before,
   &:after {
@@ -86,7 +87,8 @@ body {
   }
 
   &:before {
-    border-color: #ffffff #ffffff rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+    border-color: #d9524a #d9524a rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+    z-index: -1;
   }
 
   &:after {
