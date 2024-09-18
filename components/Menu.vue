@@ -4,19 +4,19 @@
             <li
                 v-for="mode in MODE"
                 :key="mode"
-                class="menu-item"
+                :class="{'menu-item': true, 'menu-active': currentMode === mode}"
                 @click.prevent="changeMode(mode)">
-                <span :class="[currentMode === mode ? 'link--active' : 'link link--eirene']">
+                <span class="link link--eirene">
                     {{ MODES_TEXT[mode] }}
                 </span>
             </li>
         </ul>
-        <div class="settings-item">
-            <span
-                class="link link--eirene"
-                @click.prevent="openOrClose">Настройки</span>
-            <Settings v-if="isOpen" />
-        </div>
+<!--        <div class="settings-item">-->
+<!--            <span-->
+<!--                class="link link&#45;&#45;eirene"-->
+<!--                @click.prevent="openOrClose">Настройки</span>-->
+<!--            <Settings v-if="isOpen" />-->
+<!--        </div>-->
     </div>
 </template>
 

@@ -1,16 +1,5 @@
 <template>
-    <Menu
-        :current-mode="currentMode"
-        @changeMode="getMode"
-    />
     <div class="main">
-        <div class="container">
-            <div class="search-wrapper">
-                <div class="search-input">
-                    <TextInput v-model="searchText" />
-                </div>
-            </div>
-        </div>
         <div
             v-if="items.length > 0"
             :class="{'gifs-container': true, random: isRandomMode}">
@@ -73,24 +62,6 @@ const setupImageBackground = (isLoaded: boolean) => {
 }
 
 const onImageLoad = (index: number) => items.value[index].isLoaded = true;
-
-const getMode = (mode: Mode) => {
-    switch (mode) {
-        case MODE.RANDOM:
-            getRandomGif();
-            break;
-        case MODE.TRENDING:
-            if (currentMode.value === mode) {
-                break;
-            }
-
-            getTrendGifs();
-            break;
-        case MODE.SEARCH:
-            setSearchMode();
-            break;
-    }
-}
 
 const getGifsByText = () => {
     setSearchMode();
@@ -176,7 +147,6 @@ onMounted(() => {
     observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                console.log(entry.target.id)
                 onImageLoad(entry.target.id);
                 entry.target.classList.remove('gif-hide');
             } else {
