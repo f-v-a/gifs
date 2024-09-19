@@ -1,5 +1,4 @@
-import {ref} from "vue";
-import type {Mode} from "~/helpers/types";
+
 
 export const MODE = Object.freeze({
     TRENDING: 'trending',
@@ -14,16 +13,15 @@ export const MODES_TEXT = Object.freeze({
 });
 
 export const useMode = () => {
-    const currentMode = ref<Mode>(MODE.TRENDING);
+    const route = useRoute();
 
-    const setTrendsMode = () => currentMode.value = MODE.TRENDING;
-    const setRandomMode = () => currentMode.value = MODE.RANDOM;
-    const setSearchMode = () => currentMode.value = MODE.SEARCH;
+    const getMode = () => route.path === '/' ? MODE.TRENDING : route.params.mode ?? '';
+    const setTrendsMode = () => navigateTo('/');
+    const setSearchMode = (text: string) => navigateTo({path: `/${MODE.SEARCH}`, query: {text}});
 
     return {
-        currentMode,
+        getMode,
         setTrendsMode,
-        setRandomMode,
         setSearchMode,
     }
 }

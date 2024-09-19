@@ -12,16 +12,14 @@
 <script setup lang="ts">
 const route = useRoute();
 
+const {setSearchMode, setTrendsMode} = useMode();
+
 const searchByText = (text: string) => {
     if (!text)
-        return navigateTo('/');
+        return setTrendsMode();
 
-    return navigateTo({
-        path: `/${MODE.SEARCH}`,
-        query: {text}
-    });
+    return setSearchMode(text);
 }
-
 </script>
 
 <style scoped>

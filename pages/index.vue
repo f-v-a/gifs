@@ -2,7 +2,7 @@
     <div class="main">
         <div
             v-if="items.length > 0"
-            :class="{'gifs-container': true, random: isRandomMode}">
+            class="gifs-container">
             <div
                 ref="observableItems"
                 v-for="(gif, index) in items"
@@ -12,9 +12,21 @@
                 :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
                 :style="{...setupImageBackground(gif.isLoaded), 'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
                 <NuxtImg
-                    :src="gif.images.fixed_height.url"
+                    :src="gif.images.original.webp"
                     loading="lazy"
                 />
+                <div
+                    v-if="gif.user"
+                    class="author">
+                    <div class="author-image">
+                        <NuxtImg
+                            :src="gif.user.avatar_url"
+                            loading="lazy"
+                        />
+                    </div>
+                    <span class="author-name">{{ gif.user.username }}</span>
+                    <VerifySvg v-if="gif.user?.is_verified" />
+                </div>
             </div>
         </div>
         <div ref="scrollAnchor" :style="{height: '10px'}"/>
@@ -36,8 +48,6 @@ const stateFetchOptions = useState('fetchOptions');
 const {pagination, reset} = usePagination();
 
 const {
-    currentMode,
-    setRandomMode,
     setSearchMode,
     setTrendsMode,
 } = useMode();
@@ -47,9 +57,7 @@ const {
     items,
     fetchData,
     clearText,
-} = useFetchGIF(currentMode);
-
-const isRandomMode = computed(() => currentMode.value === MODE.RANDOM);
+} = useFetchGIF();
 
 const setupImageBackground = (isLoaded: boolean) => {
     if (isLoaded) {
@@ -68,13 +76,6 @@ const getGifsByText = () => {
     reset();
 }
 
-const getRandomGif = () => {
-    setRandomMode();
-    clearText();
-    reset();
-    fetchData();
-}
-
 const getTrendGifs = () => {
     // TODO: сбросить параметр text
     setTrendsMode();
@@ -91,20 +92,20 @@ watch(() => searchText.value, (newQuery) => {
 });
 
 watch(() => stateFetchOptions.value?.rating, reset);
-
-watch(() => currentMode.value, () => {
-    items.value = [];
-    pagination.offset = 0;
-
-    const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
-
-    fetchData({
-        q: searchText.value,
-        limit: ITEMS_PER_PAGE,
-        offset: pagination.offset,
-        ...ratingOption,
-    });
-});
+//
+// watch(() => currentMode.value, () => {
+//     items.value = [];
+//     pagination.offset = 0;
+//
+//     const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
+//
+//     fetchData({
+//         q: searchText.value,
+//         limit: ITEMS_PER_PAGE,
+//         offset: pagination.offset,
+//         ...ratingOption,
+//     });
+// });
 
 const getData = () => {
     const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
@@ -157,7 +158,6 @@ onMounted(() => {
         });
     }, {threshold: 0.75});
 });
-
 </script>
 
 <style scoped>

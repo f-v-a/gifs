@@ -1,5 +1,4 @@
 import {API_URL} from "~/helpers/constants";
-import {MODE} from "~/composables/useMode";
 import type {FetchOptions, Mode} from "~/helpers/types";
 import {ref, type Ref} from "vue";
 
@@ -13,18 +12,21 @@ const useTokens = () => {
     };
 }
 
-export const useFetchGIF = (currentMode: Ref<Mode>) => {
+export const useFetchGIF = () => {
     const items = ref<object[]>([]);
     const visibleItems = ref<object[]>([]);
     const searchText = ref<string>('');
 
     const tokensIterator = useTokens();
+    const {getMode} = useMode();
     const {createAbortController} = useAbortController();
 
     const fetchData = async (options?: FetchOptions) => {
-        const abortController = createAbortController();
+        const currentMode = getMode();
 
-        const modeUpperCase = currentMode.value.toUpperCase() as keyof typeof MODE;
+        const abortController = createAbortController();
+        const modeUpperCase = currentMode.toUpperCase() as keyof typeof MODE;
+
         const fetchOptions = {
             method: 'GET',
             baseURL: API_URL,
@@ -35,7 +37,7 @@ export const useFetchGIF = (currentMode: Ref<Mode>) => {
         try {
             const data = await $fetch(MODE[modeUpperCase], fetchOptions);
 
-            switch (currentMode.value) {
+            switch (currentMode) {
                 case MODE.RANDOM:
                     if (data.data) {
                         items.value = [data.data];
