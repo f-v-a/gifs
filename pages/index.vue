@@ -1,5 +1,5 @@
 <template>
-    <div class="main">
+    <div class="main align-center">
         <div
             v-if="items.length > 0"
             class="gifs-container">
@@ -8,12 +8,12 @@
                 v-for="(gif, index) in items"
                 :key="index"
                 :id="index"
-                :data-src="gif.images.fixed_height.url"
                 :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
-                :style="{...setupImageBackground(gif.isLoaded), 'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
+                :style="{background: gif.background, 'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
                 <NuxtImg
                     :src="gif.images.original.webp"
                     loading="lazy"
+                    @load="onImageLoad(index)"
                 />
                 <div
                     v-if="gif.user"
@@ -28,15 +28,13 @@
                     <VerifySvg v-if="gif.user?.is_verified" />
                 </div>
             </div>
+            <div ref="scrollAnchor" :style="{height: '10px'}"/>
         </div>
-        <div ref="scrollAnchor" :style="{height: '10px'}"/>
     </div>
 </template>
 
 <script setup lang="ts">
-import {GIF_BACKGROUND_COLORS} from "~/pages/config.js";
 import {RATING} from "../components/rating/config.js";
-import type {Mode} from "../helpers/types";
 import {ITEMS_PER_PAGE} from "./config";
 
 const route = useRoute();
@@ -46,89 +44,25 @@ const observableItems = ref([]);
 const stateFetchOptions = useState('fetchOptions');
 
 const {pagination, reset} = usePagination();
-
-const {
-    setSearchMode,
-    setTrendsMode,
-} = useMode();
-
-const {
-    searchText,
-    items,
-    fetchData,
-    clearText,
-} = useFetchGIF();
-
-const setupImageBackground = (isLoaded: boolean) => {
-    if (isLoaded) {
-        return;
-    }
-
-    const index = Math.floor(Math.random() * GIF_BACKGROUND_COLORS.length);
-
-    return {background: GIF_BACKGROUND_COLORS[index]};
-}
+const {items, fetchData} = useFetchGIF();
 
 const onImageLoad = (index: number) => items.value[index].isLoaded = true;
 
-const getGifsByText = () => {
-    setSearchMode();
-    reset();
-}
-
-const getTrendGifs = () => {
-    // TODO: сбросить параметр text
-    setTrendsMode();
-    reset();
-    clearText();
-}
-
-watch(() => searchText.value, (newQuery) => {
-    if (!searchText.value) {
-        return;
-    }
-
-    getGifsByText();
-});
-
 watch(() => stateFetchOptions.value?.rating, reset);
-//
-// watch(() => currentMode.value, () => {
-//     items.value = [];
-//     pagination.offset = 0;
-//
-//     const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
-//
-//     fetchData({
-//         q: searchText.value,
-//         limit: ITEMS_PER_PAGE,
-//         offset: pagination.offset,
-//         ...ratingOption,
-//     });
-// });
 
 const getData = () => {
     const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
 
-    fetchData({
-        q: searchText.value,
-        limit: ITEMS_PER_PAGE,
-        offset: pagination.offset,
-        ...ratingOption,
-    });
-
-    const observer = new IntersectionObserver(async ([entry], observer) => {
+    const observer = new IntersectionObserver(([entry]) => {
         if (entry.isIntersecting) {
-            pagination.offset += 20;
-
-            await fetchData({
-                q: searchText.value,
+            fetchData({
                 limit: ITEMS_PER_PAGE,
                 offset: pagination.offset,
                 ...ratingOption,
             });
-        }
 
+            pagination.offset += ITEMS_PER_PAGE;
+        }
     }, {threshold: 0.5, rootMargin: '0px 0px 200px 0px'});
 
     observer.observe(scrollAnchor.value);
@@ -136,24 +70,36 @@ const getData = () => {
 
 let observer = null;
 
-watch(() => observableItems.value, (newItems) => {
-    const newElements = newItems.slice(-ITEMS_PER_PAGE);
+watch(() => observableItems.value, async (newValues) => {
+    await nextTick();
+
+    const newElements = newValues.slice(-ITEMS_PER_PAGE);
 
     newElements.forEach((item) => observer.observe(item));
 }, {deep: true})
 
-onMounted(() => {
+onMounted(async () => {
+    const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
+
+    await fetchData({
+        limit: ITEMS_PER_PAGE,
+        offset: pagination.offset,
+        ...ratingOption,
+    });
+
+    pagination.offset += ITEMS_PER_PAGE;
+
     getData();
 
     observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                onImageLoad(entry.target.id);
-                entry.target.classList.remove('gif-hide');
+                // onImageLoad(entry.target.id);
+                // entry.target.classList.remove('gif-hide');
             } else {
                 // entry.target.firstElementChild.srcset = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                entry.target.classList.add('gif-hide');
-                entry.target.style.background = setupImageBackground(false).background;
+                // entry.target.classList.add('gif-hide');
+                // entry.target.style.background = setupImageBackground(false).background;
             }
         });
     }, {threshold: 0.75});

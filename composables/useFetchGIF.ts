@@ -1,6 +1,6 @@
 import {API_URL} from "~/helpers/constants";
-import type {FetchOptions, Mode} from "~/helpers/types";
-import {ref, type Ref} from "vue";
+import type {FetchOptions} from "~/helpers/types";
+import {GIF_BACKGROUND_COLORS} from "../pages/config";
 
 const useTokens = () => {
     const apiTokens = useState('apiTokens');
@@ -15,7 +15,6 @@ const useTokens = () => {
 export const useFetchGIF = () => {
     const items = ref<object[]>([]);
     const visibleItems = ref<object[]>([]);
-    const searchText = ref<string>('');
 
     const tokensIterator = useTokens();
     const {getMode} = useMode();
@@ -48,7 +47,15 @@ export const useFetchGIF = () => {
                 case MODE.SEARCH:
                 case MODE.TRENDING:
                     if (data.data) {
-                        items.value.push(...data.data.map((item) => ({...item, isLoaded: false})));
+                        const gifs = data.data.map((item) => ({
+                            ...item,
+                            isLoaded: false,
+                            background: GIF_BACKGROUND_COLORS[Math.floor(Math.random() * GIF_BACKGROUND_COLORS.length)]
+                        }));
+
+                        Array.prototype.push.apply(items.value, gifs);
+
+                        return gifs;
                     }
             }
 
@@ -70,13 +77,9 @@ export const useFetchGIF = () => {
         }
     }
 
-    const clearText = () => searchText.value = '';
-
     return {
-        searchText,
         items,
         visibleItems,
         fetchData,
-        clearText,
     }
 }
