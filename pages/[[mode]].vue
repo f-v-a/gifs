@@ -1,5 +1,5 @@
 <template>
-    <div class="main">
+    <div class="main align-center">
         <div
                 v-if="items.length > 0"
                 class="gifs-container">
@@ -10,10 +10,11 @@
                     :id="index"
                     :data-src="gif.images.fixed_height.url"
                     :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
-                    :style="{...setupImageBackground(gif.isLoaded), 'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
+                    :style="{'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
                 <NuxtImg
-                        :src="gif.images.original.webp"
-                        loading="lazy"
+                    :src="gif.images.original.webp"
+                    loading="lazy"
+                    @load="onImageLoad(index)"
                 />
                 <div
                         v-if="gif.user"
@@ -34,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import {GIF_BACKGROUND_COLORS, ITEMS_PER_PAGE} from "./config";
+import {ITEMS_PER_PAGE} from "./config";
 import {RATING} from "../components/rating/config";
 
 let observer = null;
@@ -43,24 +44,12 @@ const scrollAnchor = ref();
 
 const route = useRoute();
 const stateFetchOptions = useState('fetchOptions');
-const {pagination, reset} = usePagination();
+const {pagination} = usePagination();
 
 const {
-    searchText,
     items,
     fetchData,
-    clearText,
 } = useFetchGIF();
-
-const setupImageBackground = (isLoaded: boolean) => {
-    if (isLoaded) {
-        return;
-    }
-
-    const index = Math.floor(Math.random() * GIF_BACKGROUND_COLORS.length);
-
-    return {background: GIF_BACKGROUND_COLORS[index]};
-}
 
 const onImageLoad = (index: number) => items.value[index].isLoaded = true;
 
@@ -76,10 +65,10 @@ watch(() => route.query.text, (text: string) => {
 
     const observer = new IntersectionObserver(async ([entry], observer) => {
         if (entry.isIntersecting) {
-            pagination.offset += 20;
+            pagination.offset += ITEMS_PER_PAGE;
 
             await fetchData({
-                q: searchText.value,
+                q: route.query?.text,
                 limit: ITEMS_PER_PAGE,
                 offset: pagination.offset,
                 ...ratingOption,
@@ -103,12 +92,12 @@ onMounted(() => {
     observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                onImageLoad(entry.target.id);
-                entry.target.classList.remove('gif-hide');
+                // onImageLoad(entry.target.id);
+                // entry.target.classList.remove('gif-hide');
             } else {
                 // entry.target.firstElementChild.srcset = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                entry.target.classList.add('gif-hide');
-                entry.target.style.background = setupImageBackground(false).background;
+                // entry.target.classList.add('gif-hide');
+                // entry.target.style.background = setupImageBackground(false).background;
             }
         });
     }, {threshold: 0.75});
