@@ -15,7 +15,7 @@ export const MODES_TEXT = Object.freeze({
 export const useMode = () => {
     const route = useRoute();
 
-    const getMode = () => route.path === '/' ? MODE.TRENDING : route.params.mode ?? '';
+    const getMode = () => route.path === '/' ? MODE.TRENDING : route.name;
     const setTrendsMode = () => navigateTo('/');
     const setSearchMode = (text: string) => navigateTo({path: `/${MODE.SEARCH}`, query: {text}});
 

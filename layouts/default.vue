@@ -5,9 +5,7 @@
                 <div class="logo-container">
                     <h1 class="logo">
                         GIPHY
-                        <span class="current-mode">
-                        {{ MODES_TEXT[mode] }}
-                    </span>
+                        <span class="current-mode">{{ MODES_TEXT[getMode()] }}</span>
                     </h1>
                 </div>
             </NuxtLink>
@@ -20,13 +18,7 @@
 </template>
 
 <script setup>
-const route = useRoute();
-
-const mode = ref('');
-
-watch(() => route.params.mode, (newValue) => {
-    mode.value = newValue ?? MODE.TRENDING;
-}, {immediate: true});
+const {getMode} = useMode();
 </script>
 
 <style scoped>

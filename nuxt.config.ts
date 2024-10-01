@@ -15,6 +15,10 @@ export default defineNuxtConfig({
     {
       path: '~/components',
       pathPrefix: 'svg',
+    },
+    {
+      path: '~/components',
+      pathPrefix: 'content',
     }
   ],
   runtimeConfig: {

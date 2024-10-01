@@ -1,33 +1,23 @@
 <template>
     <div class="main align-center">
         <div
-                v-if="items.length > 0"
-                class="gifs-container">
+            v-if="items.length > 0"
+            class="gifs-container">
             <div
-                    ref="observableItems"
-                    v-for="(gif, index) in items"
-                    :key="index"
-                    :id="index"
-                    :data-src="gif.images.fixed_height.url"
-                    :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
-                    :style="{'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
+                ref="observableItems"
+                v-for="(gif, index) in items"
+                :key="index"
+                :id="index"
+                :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
+                :style="{'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
                 <NuxtImg
                     :src="gif.images.original.webp"
                     loading="lazy"
                     @load="onImageLoad(index)"
                 />
-                <div
-                        v-if="gif.user"
-                        class="author">
-                    <div class="author-image">
-                        <NuxtImg
-                                :src="gif.user.avatar_url"
-                                loading="lazy"
-                        />
-                    </div>
-                    <span class="author-name">{{ gif.user.username }}</span>
-                    <VerifySvg v-if="gif.user?.is_verified" />
-                </div>
+               <AuthorInfo
+                   v-if="gif.user"
+                   :user="gif.user" />
             </div>
         </div>
         <div ref="scrollAnchor" :style="{height: '10px'}"/>
@@ -39,6 +29,7 @@ import {ITEMS_PER_PAGE} from "./config";
 import {RATING} from "../components/rating/config";
 
 let observer = null;
+
 const observableItems = ref([]);
 const scrollAnchor = ref();
 
@@ -62,24 +53,6 @@ watch(() => route.query.text, (text: string) => {
         offset: pagination.offset,
         ...ratingOption,
     });
-
-    const observer = new IntersectionObserver(async ([entry], observer) => {
-        if (entry.isIntersecting) {
-            pagination.offset += ITEMS_PER_PAGE;
-
-            await fetchData({
-                q: route.query?.text,
-                limit: ITEMS_PER_PAGE,
-                offset: pagination.offset,
-                ...ratingOption,
-            });
-        }
-
-    }, {threshold: 0.5, rootMargin: '0px 0px 200px 0px'});
-
-    if (scrollAnchor.value) {
-        observer.observe(scrollAnchor.value);
-    }
 }, {immediate: true});
 
 watch(() => observableItems.value, (newItems) => {
@@ -89,6 +62,24 @@ watch(() => observableItems.value, (newItems) => {
 }, {deep: true})
 
 onMounted(() => {
+    const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
+
+    const observer2 = new IntersectionObserver(async ([entry]) => {
+        if (entry.isIntersecting) {
+            await fetchData({
+                q: route.query?.text,
+                limit: ITEMS_PER_PAGE,
+                offset: pagination.offset,
+                ...ratingOption,
+            });
+
+            pagination.offset += ITEMS_PER_PAGE;
+        }
+
+    }, {threshold: 0.5, rootMargin: '0px 0px 200px 0px'});
+
+    observer2.observe(scrollAnchor.value);
+
     observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
