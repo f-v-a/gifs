@@ -1,16 +1,31 @@
 <template>
-    <Content
-        parent-class-names="main align-center"
-        child-class-names="gifs-container"
-        :items="items"
-        @loaded="onImageLoad"
-        @getData="getData"/>
+    <div class="main align-center">
+        <div class="gifs-container">
+            <GifItem
+                ref="observableItems"
+                v-for="(item, index) in items"
+                :key="index"
+                :id="index"
+                :item="item"
+                :class-names="['gif', item.isLoaded ? 'gif-loaded' : 'gif-loading']"
+                :styles="{'grid-column': item.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}"
+                @loaded="onImageLoad">
+                <AuthorInfo
+                    v-if="item.user"
+                    :item="item.user" />
+            </GifItem>
+        </div>
+        <div ref="scrollAnchor" :style="{height: '10px'}"/>
+    </div>
 </template>
 
 <script setup lang="ts">
 import {RATING} from "../components/rating/config.js";
 import {ITEMS_PER_PAGE} from "./config";
+import {createObserver} from "../composables/useObserver";
 
+const scrollAnchor = ref();
+const observableItems = ref([]);
 const stateFetchOptions = useState('fetchOptions');
 
 const {pagination, reset} = usePagination();
@@ -42,7 +57,7 @@ let observer = null;
 //     newElements.forEach((item) => observer.observe(item));
 // }, {deep: true})
 
-onMounted(async () => {
+onMounted(() => {
     // const ratingOption = stateFetchOptions.value?.rating ? {rating: RATING[stateFetchOptions.value.rating].param} : {};
     //
     // await fetchData({
@@ -52,6 +67,9 @@ onMounted(async () => {
     // });
 
     // pagination.offset += ITEMS_PER_PAGE;
+
+    const observer = createObserver(getData, {threshold: 0.5, rootMargin: '0px 0px 200px 0px'});
+    observer.observe(scrollAnchor.value);
 
     // getData();
 
