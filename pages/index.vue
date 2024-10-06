@@ -8,7 +8,10 @@
                 :id="index"
                 :item="item"
                 :class-names="['gif', item.isLoaded ? 'gif-loaded' : 'gif-loading']"
-                :styles="{'grid-column': item.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}"
+                :styles="{
+                    'grid-row-end': item.images.original.height > item.images.original.width ? 'span 17' : 'span 13',
+                    'grid-column-end': item.images.fixed_height.width >= 275 ? 'span 2' : 'span 1'
+                }"
                 @loaded="onImageLoad">
                 <AuthorInfo
                     v-if="item.user"
@@ -20,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import {RATING} from "../components/rating/config.js";
+import {RATING} from "~/components/rating/config";
 import {ITEMS_PER_PAGE} from "./config";
-import {createObserver} from "../composables/useObserver";
+import {createObserver} from "~/composables/useObserver";
 
 const scrollAnchor = ref();
 const observableItems = ref([]);
