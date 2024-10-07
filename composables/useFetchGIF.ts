@@ -1,26 +1,36 @@
 import {API_URL} from "~/helpers/constants";
 import type {FetchOptions} from "~/helpers/types";
 import {GIF_BACKGROUND_COLORS} from "../pages/config";
+import {getTokenRefreshTime} from "../helpers/index";
+import {useTokens, useTokensState} from "./useTokens";
 
-const useTokens = () => {
-    const apiTokens = useState('apiTokens');
-    const cookieToken = useCookie('api_token');
-
-    return {
-        cookieToken,
-        values: apiTokens.value.values(),
-    };
-}
+// const useTokens = () => {
+//     const apiToken = useState('apiToken');
+//     const apiTokens = useState('apiTokens');
+//     const cookieToken = useCookie('api_token');
+//
+//     return {
+//         apiToken,
+//         cookieToken,
+//         values: apiTokens.value.values(),
+//     };
+// }
 
 export const useFetchGIF = () => {
     const items = ref<object[]>([]);
     const visibleItems = ref<object[]>([]);
 
-    const tokensIterator = useTokens();
+    const {currentToken} = useTokens();
     const {getMode} = useMode();
     const {createAbortController} = useAbortController();
 
+    const iterator = useTokensState().value.values();
+
     const fetchData = async (options?: FetchOptions) => {
+        if (!currentToken.value.token) {
+            return;
+        }
+
         const currentMode = getMode();
 
         const abortController = createAbortController();
@@ -29,7 +39,7 @@ export const useFetchGIF = () => {
         const fetchOptions = {
             method: 'GET',
             baseURL: API_URL,
-            query: {api_key: tokensIterator.cookieToken.value, ...options},
+            query: {api_key: currentToken.value.token, ...options},
             signal: abortController.signal,
         };
 
@@ -64,17 +74,41 @@ export const useFetchGIF = () => {
             }
         } catch (e) {
             if (e.response?.status === 429) {
-                let key = tokensIterator.values.next();
+                setValidToken(options)
+            }
 
-                if (key.done) {
-                    return;
-                }
-
-                tokensIterator.cookieToken.value = key.value;
-
-                await fetchData(options);
+            if (e.response?.status === 414) {
+                console.log('Слишком длинный запрос');
             }
         }
+    }
+
+    const setValidToken = (options?: FetchOptions) => {
+        let key = iterator.next();
+
+        if (key.done) {
+            console.log('Ключи для получения гиф на данный момент закончились');
+
+            return;
+        }
+
+        if (!key.value.time) {
+            currentToken.value = {token: key.value.token, time: getTokenRefreshTime().getTime()};
+            key.value.time = getTokenRefreshTime().getTime();
+
+            return fetchData(options);
+        }
+
+        const isTokenValid = key.value.time < new Date().getTime();
+
+        if (isTokenValid) {
+            currentToken.value = {token: key.value.token, time: null};
+            key.value.time = getTokenRefreshTime().getTime();
+
+            return fetchData(options);
+        }
+
+        setValidToken(options);
     }
 
     return {

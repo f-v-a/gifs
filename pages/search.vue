@@ -1,24 +1,22 @@
 <template>
     <div class="main align-center">
-        <div
-            v-if="items.length > 0"
-            class="gifs-container">
-            <div
+        <div class="gifs-container">
+            <GifItem
                 ref="observableItems"
-                v-for="(gif, index) in items"
+                v-for="(item, index) in items"
                 :key="index"
                 :id="index"
-                :class="['gif', gif.isLoaded ? 'gif-loaded' : 'gif-loading']"
-                :style="{'grid-column': gif.images.fixed_height.width >= 280 ? 'span 2' : 'span 1'}">
-                <NuxtImg
-                    :src="gif.images.original.webp"
-                    loading="lazy"
-                    @load="onImageLoad(index)"
-                />
-               <AuthorInfo
-                   v-if="gif.user"
-                   :user="gif.user" />
-            </div>
+                :item="item"
+                :class-names="['gif', item.isLoaded ? 'gif-loaded' : 'gif-loading']"
+                :styles="{
+                    'grid-row-end': item.images.original.height > item.images.original.width ? 'span 17' : 'span 13',
+                    'grid-column-end': item.images.fixed_height.width >= 275 ? 'span 2' : 'span 1'
+                }"
+                @loaded="onImageLoad">
+                <AuthorInfo
+                    v-if="item.user"
+                    :item="item.user" />
+            </GifItem>
         </div>
         <div ref="scrollAnchor" :style="{height: '10px'}"/>
     </div>
