@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-interface IProps {id: number | string, item: object, classNames?: string[] | string, styles?: object}
+interface IProps {id: number, item: object, classNames?: string[] | string, styles?: object}
 interface IEmits {(e: 'loaded', value: number)}
 
 defineProps<IProps>();

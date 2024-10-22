@@ -299,6 +299,7 @@ body {
 .gif {
   position: relative;
   border-radius: 3px;
+  grid-row-end: span 13;
 
   @media screen and (max-width: 720px) {
     grid-column: span 2 !important;

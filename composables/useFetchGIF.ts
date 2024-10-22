@@ -1,69 +1,49 @@
 import {API_URL} from "~/helpers/constants";
 import type {FetchOptions} from "~/helpers/types";
-import {GIF_BACKGROUND_COLORS} from "../pages/config";
-import {getTokenRefreshTime} from "../helpers/index";
-import {useTokens, useTokensState} from "./useTokens";
-
-// const useTokens = () => {
-//     const apiToken = useState('apiToken');
-//     const apiTokens = useState('apiTokens');
-//     const cookieToken = useCookie('api_token');
-//
-//     return {
-//         apiToken,
-//         cookieToken,
-//         values: apiTokens.value.values(),
-//     };
-// }
+import {getTokenRefreshTime} from "~/helpers";
+import {useTokens} from "./useTokens";
 
 export const useFetchGIF = () => {
     const items = ref<object[]>([]);
-    const visibleItems = ref<object[]>([]);
 
-    const {currentToken} = useTokens();
+    const {apiTokens, apiToken} = useTokens();
     const {getMode} = useMode();
     const {createAbortController} = useAbortController();
 
-    const iterator = useTokensState().value.values();
+    const tokensIterator = apiTokens.value.values();
 
     const fetchData = async (options?: FetchOptions) => {
-        if (!currentToken.value.token) {
+        if (!apiToken.value?.token) {
             return;
         }
 
         const currentMode = getMode();
-
         const abortController = createAbortController();
-        const modeUpperCase = currentMode.toUpperCase() as keyof typeof MODE;
 
         const fetchOptions = {
             method: 'GET',
             baseURL: API_URL,
-            query: {api_key: currentToken.value.token, ...options},
+            query: {api_key: apiToken.value.token, ...options},
             signal: abortController.signal,
         };
 
         try {
-            const data = await $fetch(MODE[modeUpperCase], fetchOptions);
+            const data = await $fetch(MODE[currentMode], fetchOptions);
 
             switch (currentMode) {
-                case MODE.RANDOM:
+                case MODE.random:
                     if (data.data) {
                         items.value = [data.data];
                     }
 
                     break;
 
-                case MODE.SEARCH:
-                case MODE.TRENDING:
+                case MODE.search:
+                case MODE.trending:
                     if (data.data) {
-                        const gifs = data.data.map((item) => ({
-                            ...item,
-                            isLoaded: false,
-                            background: GIF_BACKGROUND_COLORS[Math.floor(Math.random() * GIF_BACKGROUND_COLORS.length)]
-                        }));
+                        const gifs = data.data.map((item) => ({...item, isLoaded: false}));
 
-                        Array.prototype.push.apply(items.value, gifs);
+                        items.value.push(...gifs);
 
                         return gifs;
                     }
@@ -74,7 +54,7 @@ export const useFetchGIF = () => {
             }
         } catch (e) {
             if (e.response?.status === 429) {
-                setValidToken(options)
+                setValidToken(options);
             }
 
             if (e.response?.status === 414) {
@@ -84,7 +64,7 @@ export const useFetchGIF = () => {
     }
 
     const setValidToken = (options?: FetchOptions) => {
-        let key = iterator.next();
+        let key = tokensIterator.next();
 
         if (key.done) {
             console.log('Ключи для получения гиф на данный момент закончились');
@@ -93,7 +73,7 @@ export const useFetchGIF = () => {
         }
 
         if (!key.value.time) {
-            currentToken.value = {token: key.value.token, time: getTokenRefreshTime().getTime()};
+            apiToken.value = {token: key.value.token, time: getTokenRefreshTime().getTime()};
             key.value.time = getTokenRefreshTime().getTime();
 
             return fetchData(options);
@@ -102,7 +82,7 @@ export const useFetchGIF = () => {
         const isTokenValid = key.value.time < new Date().getTime();
 
         if (isTokenValid) {
-            currentToken.value = {token: key.value.token, time: null};
+            apiToken.value = {token: key.value.token, time: null};
             key.value.time = getTokenRefreshTime().getTime();
 
             return fetchData(options);
@@ -113,7 +93,6 @@ export const useFetchGIF = () => {
 
     return {
         items,
-        visibleItems,
         fetchData,
     }
 }

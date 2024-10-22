@@ -1,23 +1,23 @@
 
 
 export const MODE = Object.freeze({
-    TRENDING: 'trending',
-    RANDOM: 'random',
-    SEARCH: 'search',
+    trending: 'trending',
+    random: 'random',
+    search: 'search',
 });
 
 export const MODES_TEXT = Object.freeze({
-    [MODE.TRENDING]: 'Тренды',
-    [MODE.RANDOM]: 'Случайная подборка',
-    [MODE.SEARCH]: 'Глобальный поиск',
+    [MODE.trending]: 'Тренды',
+    [MODE.random]: 'Случайная подборка',
+    [MODE.search]: 'Глобальный поиск',
 });
 
 export const useMode = () => {
     const route = useRoute();
 
-    const getMode = () => route.path === '/' ? MODE.TRENDING : route.name;
+    const getMode = () => route.path === '/' ? MODE.trending : route.name;
     const setTrendsMode = () => navigateTo('/');
-    const setSearchMode = (text: string) => navigateTo({path: `/${MODE.SEARCH}`, query: {text}});
+    const setSearchMode = (text: string) => navigateTo({path: `/${MODE.search}`, query: {text}});
 
     return {
         getMode,
